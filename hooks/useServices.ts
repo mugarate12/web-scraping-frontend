@@ -24,6 +24,7 @@ export default function useServices() {
       // const data = monitored.map((s: any) => {
       //   console.log(JSON.parse(s.content));
       // })
+
       const data = convertToJSON(monitored)
       setServices(data)
     })
@@ -31,6 +32,8 @@ export default function useServices() {
 
   useEffect(() => {
     socket.on('monitoring-updated', (monitored: any) => {
+      console.log('atualizado!');
+
       const data = convertToJSON(monitored)
       setServices(data)
     })
