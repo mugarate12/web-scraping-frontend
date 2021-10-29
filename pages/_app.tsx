@@ -4,7 +4,8 @@ import Head from 'next/head'
 import ContextWrapper from '../context'
 
 import {
-  Header
+  Header,
+  Menu
 } from './../components'
 
 import '../styles/globals.css'
@@ -21,6 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
       <ContextWrapper>
         <Header />
+        <Menu />
 
         <Component {...pageProps} />
       </ContextWrapper>

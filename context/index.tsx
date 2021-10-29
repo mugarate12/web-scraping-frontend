@@ -1,4 +1,5 @@
 import AuthUserContextWrapper from "./authUserContext"
+import MenuContext from './menuContext'
 
 interface Props {
   children: any
@@ -9,7 +10,9 @@ export default function ContextWrapper({
 }: Props) {
   return (
     <AuthUserContextWrapper>
-      { children }
+      <MenuContext>
+        { children }
+      </MenuContext>
     </AuthUserContextWrapper>
   )
 }

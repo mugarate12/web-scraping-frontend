@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import {
   AppBar,
   Box,
-  Button,
   Toolbar,
   Typography,
   IconButton,
@@ -18,9 +17,12 @@ import {
   useToken
 } from './../../hooks'
 
-export default function Header() {
-  const router = useRouter()
+import { useMenuContext } from './../../context/menuContext'
 
+export default function Header() {
+  const { setOpen } = useMenuContext()
+
+  const router = useRouter()
   const token = useToken()
 
   function renderAuthenticatedIcon() {
@@ -55,7 +57,7 @@ export default function Header() {
           }}
         >
           <AppBar 
-            position="static"
+            position="fixed"
             sx={{
               backgroundColor: '#333'
             }}
@@ -67,6 +69,7 @@ export default function Header() {
                 color="inherit"
                 aria-label="menu"
                 sx={{ mr: 2 }}
+                onClick={() => setOpen(true)}
               >
                 <Menu />
               </IconButton>
@@ -74,7 +77,6 @@ export default function Header() {
                 {renderTitle()}
               </Typography>
               {renderAuthenticatedIcon()}
-              {/* <Button color="inherit">Login</Button> */}
             </Toolbar>
           </AppBar>
         </Box>
