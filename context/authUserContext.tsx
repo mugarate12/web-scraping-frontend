@@ -35,7 +35,7 @@ export default function AuthUserContextWrapper({
 
     if (clientSideRendering) {
       const tokenLocalStorage = String(localStorage.getItem('userToken'))
-
+      
       if (tokenLocalStorage.length > 0) {
         setToken(token)
       }
@@ -45,8 +45,9 @@ export default function AuthUserContextWrapper({
   return (
     <authUserContext.Provider
       value={{
-        token,
-        setToken
+        token: token,
+
+        setToken: setToken
       }}
     >
       { children }

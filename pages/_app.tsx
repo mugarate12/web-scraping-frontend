@@ -3,6 +3,10 @@ import Head from 'next/head'
 
 import ContextWrapper from '../context'
 
+import {
+  Header
+} from './../components'
+
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -16,6 +20,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <ContextWrapper>
+        <Header />
+
         <Component {...pageProps} />
       </ContextWrapper>
     </>

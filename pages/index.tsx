@@ -21,16 +21,22 @@ import {
   Button,
   Paper,
   InputAdornment,
+  IconButton,
   TextField
 } from '@material-ui/core'
 
 import {
   AccountCircle,
   Lock,
+  Visibility,
+  VisibilityOff,
   PersonOutlineSharp
 } from '@material-ui/icons'
 
-import { Graph } from './../components'
+import { 
+  Graph,
+  Header
+} from './../components'
 
 import {
   useAuth,
@@ -52,6 +58,7 @@ const Home: NextPage = () => {
 
   const [ login, setLogin ] = useState<string>('')
   const [ password, setPassword ] = useState<string>('')
+  const [ showPassword, setShowPassword ] = useState<boolean>(false)
 
   function normalizeData(baselineData: Array<reportDataInterface>, reportsData: Array<reportDataInterface>) {
     const data = baselineData.map((baseline, index) => {
@@ -160,7 +167,22 @@ const Home: NextPage = () => {
                       <Lock sx={{ color: '#000' }} />
                     </InputAdornment>
                   ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        onMouseDown={(event) => {
+                          event.preventDefault()
+                        }}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
                 }}
+                type={showPassword ? 'text' : 'password'}
                 label="senha"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
