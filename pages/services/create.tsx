@@ -114,7 +114,7 @@ const CreateService: NextPage = () => {
                 sx={{
                   width: 200
                 }}
-                renderInput={(params) => <TextField {...params} label="With categories" />}
+                renderInput={(params) => <TextField {...params} label="Ordem alfabética" />}
               />
 
               <Select
