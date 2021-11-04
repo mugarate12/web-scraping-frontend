@@ -20,7 +20,36 @@ export default function useServicesOperations() {
     }
   }
 
+  async function updateService(id: number, time: number) {
+    return await api.put(`/services/${id}`, {
+      updateTime: time
+    })
+      .then((r) => {
+        console.log(r);
+        return true
+      })
+      .catch(error => {
+        alert('atualização não foi possível, por favor, tente novamente')
+      
+        return false
+      })
+  }
+
+  async function removeService(id: number) {
+    return await api.delete(`/services/${id}`)
+      .then(() => {
+        return true
+      })
+      .catch(error => {
+        alert('não foi possível remover o serviço, por favor, tente novamente')
+
+        return false
+      })
+  }
+
   return {
-    createService
+    createService,
+    updateService,
+    removeService
   }
 }

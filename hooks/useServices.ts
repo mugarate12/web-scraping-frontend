@@ -4,40 +4,37 @@ import {
 } from 'react'
 
 import socket from './../config/socketIO'
+import api from './../config/axios'
 
 import { Service } from './../interfaces/services'
 
-export default function useServices() {
+interface GetServicesResponseInterface {
+  message: string,
+  services: Array<Service>
+}
+
+export default function useServices(updateState?: boolean) {
   const [ services, setServices ] = useState<Array<Service>>([])
 
-  function convertToJSON(monitored: any) {
-    return monitored.map((service: any) => {
-      return {
-        name: service.name,
-        content:  JSON.parse(service.content)
-      }
-    })
+  async function getServices() {
+    await api.get<GetServicesResponseInterface>('/services')
+      .then(response => {
+        setServices(response.data.services)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   useEffect(() => {
-    socket.on('monitoring-services', (monitored: any) => {
-      // const data = monitored.map((s: any) => {
-      //   console.log(JSON.parse(s.content));
-      // })
-
-      const data = convertToJSON(monitored)
-      setServices(data)
-    })
-  }, [ socket ])
+    getServices()
+  }, [])
 
   useEffect(() => {
-    socket.on('monitoring-updated', (monitored: any) => {
-      console.log('atualizado!');
-
-      const data = convertToJSON(monitored)
-      setServices(data)
-    })
-  }, [])
+    if (updateState) {
+      getServices()
+    }
+  }, [ updateState ])
 
   return services
 }

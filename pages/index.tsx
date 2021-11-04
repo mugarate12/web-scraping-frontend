@@ -39,8 +39,7 @@ import {
 } from './../components'
 
 import {
-  useAuth,
-  useServices
+  useAuth
 } from './../hooks'
 
 import styles from '../styles/Home.module.css'
@@ -51,7 +50,6 @@ interface reportDataInterface {
 }
 
 const Home: NextPage = () => {
-  const services = useServices()
   const authentication = useAuth()
 
   moment.locale('pt-br')
@@ -59,36 +57,6 @@ const Home: NextPage = () => {
   const [ login, setLogin ] = useState<string>('')
   const [ password, setPassword ] = useState<string>('')
   const [ showPassword, setShowPassword ] = useState<boolean>(false)
-
-  function normalizeData(baselineData: Array<reportDataInterface>, reportsData: Array<reportDataInterface>) {
-    const data = baselineData.map((baseline, index) => {
-      const x = baseline.y
-      const y = reportsData[index].y
-
-      return {
-        hour: moment(baseline['x']).format('HH:mm:ss'),
-        uv: x,
-        pv: y
-      }
-    })
-
-    return data
-  }
-
-  function renderServices() {
-    return services.map((service, index) => {
-      const content = service.content
-      const data = normalizeData(content.baseline, content.reports)
-
-      return (
-        <Graph
-          key={String(index)}
-          name={service.name}
-          data={data}
-        />
-      )
-    })
-  }
 
   return (
     <>

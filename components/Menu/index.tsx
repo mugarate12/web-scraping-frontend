@@ -70,6 +70,14 @@ export default function Menu() {
           >
             <ListItemText primary='criar serviço' sx={{ marginLeft: '20px' }}/>
           </ListItem>
+          
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/services/view')}
+            onKeyDown={(event) => toggleDrawer(event, '/services/view')}
+          >
+            <ListItemText primary='ver serviços' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
         </>
       )
     }
