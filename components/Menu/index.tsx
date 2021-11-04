@@ -16,6 +16,7 @@ import {
 import {
   ArrowUpward,
   ArrowDownward,
+  Person,
   PersonalVideo
 } from '@material-ui/icons'
 
@@ -24,6 +25,7 @@ import { useMenuContext } from './../../context/menuContext'
 export default function Menu() {
   const { open, setOpen } = useMenuContext()
 
+  const [ openUsersOptions, setOpenUsersOptions ] = useState<boolean>(false)
   const [ openServicesOptions, setOpenServicesOptions ] = useState<boolean>(false)
 
   const router = useRouter()
@@ -83,6 +85,30 @@ export default function Menu() {
     }
   }
 
+  function renderUsersOptions() {
+    if (openUsersOptions) {
+      return (
+        <>
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/users/create')}
+            onKeyDown={(event) => toggleDrawer(event, '/users/create')}
+          >
+            <ListItemText primary='criar usuário' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
+          
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/users/view')}
+            onKeyDown={(event) => toggleDrawer(event, '/users/view')}
+          >
+            <ListItemText primary='ver usuários' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
+        </>
+      )
+    }
+  }
+
   function renderMenu() {
     if (router.pathname !== '/') {
       return (
@@ -94,15 +120,29 @@ export default function Menu() {
           <Box
             sx={{ width: 'auto', minWidth: '200px' }}
             role="presentation"
-            // onClick={(event) => toggleDrawer(event, '/services/create')}
-            // onKeyDown={(event) => toggleDrawer(event, '/services/create')}
           >
             <List>
               <ListItem 
                 button
+                onClick={(event) => handleOption(event, () => setOpenUsersOptions(!openUsersOptions))}
+                onKeyDown={(event) => handleOption(event, () => setOpenUsersOptions(!openUsersOptions))}
+              >
+                <ListItemIcon>
+                  <Person />
+                </ListItemIcon>
+
+                <ListItemText primary='Usuários'/>
+
+                {renderArrow(openUsersOptions)}
+              </ListItem>
+              
+              {renderUsersOptions()}
+              
+              <ListItem 
+                button
                 onClick={(event) => handleOption(event, () => setOpenServicesOptions(!openServicesOptions))}
                 onKeyDown={(event) => handleOption(event, () => setOpenServicesOptions(!openServicesOptions))}
-              >
+                >
                 <ListItemIcon>
                   <PersonalVideo />
                 </ListItemIcon>
@@ -111,7 +151,7 @@ export default function Menu() {
 
                 {renderArrow(openServicesOptions)}
               </ListItem>
-              
+
               {renderServicesOptions()}
             </List>
           </Box>

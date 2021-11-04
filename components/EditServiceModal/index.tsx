@@ -94,7 +94,7 @@ export default function EditServiceModal({
         <div className={styles.actions_container}>
           <Button variant="text" onClick={() => setUpdateRowData(undefined)}>Cancelar</Button>
 
-          <Button variant="contained" color="error">Remover</Button>
+          <Button variant="contained" color="error" onClick={() => handleDelete()}>Remover</Button>
           <Button variant="contained" color="success" onClick={() => handleUpdateTime()}>Editar</Button>
         </div>
 

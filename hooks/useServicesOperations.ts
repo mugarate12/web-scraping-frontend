@@ -25,7 +25,6 @@ export default function useServicesOperations() {
       updateTime: time
     })
       .then((r) => {
-        console.log(r);
         return true
       })
       .catch(error => {
