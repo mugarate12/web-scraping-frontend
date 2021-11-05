@@ -1,6 +1,8 @@
 import {
   useState,
-  useEffect
+  useEffect,
+  Dispatch,
+  SetStateAction
 } from 'react'
 
 import socket from './../config/socketIO'
@@ -13,13 +15,25 @@ interface GetServicesResponseInterface {
   services: Array<Service>
 }
 
-export default function useServices(updateState?: boolean) {
+interface Params {
+  updateState?: boolean, 
+  setUpdateState: Dispatch<SetStateAction<boolean>>
+}
+
+export default function useServices({
+  updateState,
+  setUpdateState
+}: Params) {
   const [ services, setServices ] = useState<Array<Service>>([])
 
   async function getServices() {
     await api.get<GetServicesResponseInterface>('/services')
       .then(response => {
         setServices(response.data.services)
+
+        if (!!setUpdateState) {
+          setUpdateState(false)
+        }
       })
       .catch(error => {
         console.log(error)
@@ -31,7 +45,7 @@ export default function useServices(updateState?: boolean) {
   }, [])
 
   useEffect(() => {
-    if (updateState) {
+    if (!!updateState) {
       getServices()
     }
   }, [ updateState ])

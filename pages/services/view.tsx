@@ -31,10 +31,10 @@ interface UpdateRowData {
 }
 
 const ViewsServices: NextPage = () => {
-  const services = useServices()
-
   const [ updateRowData, setUpdateRowData ] = useState<UpdateRowData | undefined>(undefined)
   const [ updateRows, setUpdateRows ] = useState<boolean>(false)
+  
+  const services = useServices({ updateState: updateRows, setUpdateState: setUpdateRows })
 
   function normalizeData() {
     return services.map((service) => {
@@ -64,7 +64,7 @@ const ViewsServices: NextPage = () => {
 
   const columns = [
     { field: 'col1', headerName: 'Nome', width: 150 },
-    { field: 'col2', headerName: 'Tempo', width: 150 },
+    { field: 'col2', headerName: 'Tempo em minutos', width: 150 },
   ]
 
   function renderEditServiceModal() {
@@ -75,6 +75,7 @@ const ViewsServices: NextPage = () => {
           serviceName={updateRowData.serviceName}
           updateTime={updateRowData.updateTime}
           setUpdateRowData={setUpdateRowData}
+          setUpdateRows={setUpdateRows}
         />
       )
     }

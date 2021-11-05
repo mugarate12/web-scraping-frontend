@@ -35,13 +35,15 @@ interface UpdateRowData {
 interface Props {
   id: number,
   login: string,
-  setUpdateRowData: Dispatch<SetStateAction<UpdateRowData | undefined>>
+  setUpdateRowData: Dispatch<SetStateAction<UpdateRowData | undefined>>,
+  setUpdateRows: Dispatch<SetStateAction<boolean>>
 }
 
 export default function EditUsersModal({
   id,
   login,
-  setUpdateRowData
+  setUpdateRowData,
+  setUpdateRows
 }: Props) {
   const usersOperations = useUsersOperations()
 
@@ -54,6 +56,7 @@ export default function EditUsersModal({
     if (result) {
       alert('serviço atualizado com sucesso!')
 
+      setUpdateRows(true)
       setUpdateRowData(undefined)
     }
   }
@@ -64,6 +67,7 @@ export default function EditUsersModal({
     if (result) {
       alert('serviço deletado com sucesso!')
 
+      setUpdateRows(true)
       setUpdateRowData(undefined)
     }
   }

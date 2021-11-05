@@ -29,14 +29,16 @@ interface Props {
   id: number,
   serviceName: string,
   updateTime: number,
-  setUpdateRowData: Dispatch<SetStateAction<UpdateRowData | undefined>>
+  setUpdateRowData: Dispatch<SetStateAction<UpdateRowData | undefined>>,
+  setUpdateRows: Dispatch<SetStateAction<boolean>>
 }
 
 export default function EditServiceModal({
   id,
   serviceName,
   updateTime,
-  setUpdateRowData
+  setUpdateRowData,
+  setUpdateRows
 }: Props) {
   const servicesOperations = useServicesOperations()
 
@@ -48,6 +50,7 @@ export default function EditServiceModal({
     if (result) {
       alert('serviço atualizado com sucesso!')
 
+      setUpdateRows(true)
       setUpdateRowData(undefined)
     }
   }
@@ -58,6 +61,7 @@ export default function EditServiceModal({
     if (result) {
       alert('serviço deletado com sucesso!')
 
+      setUpdateRows(true)
       setUpdateRowData(undefined)
     }
   }

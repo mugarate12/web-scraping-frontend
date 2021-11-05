@@ -70,6 +70,7 @@ const ViewUsers: NextPage = () => {
           id={updateRowData.id}
           login={updateRowData.login}
           setUpdateRowData={setUpdateRowData}
+          setUpdateRows={setUpdateRows}
         />
       )
     }

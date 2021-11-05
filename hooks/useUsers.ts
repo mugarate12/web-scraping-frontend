@@ -52,7 +52,7 @@ export default function useUsers({ updateUsersState, setUpdateUsersState }: Para
   }, [])
 
   useEffect(() => {
-    if (updateUsersState) {
+    if (!!updateUsersState) {
       getUsers()
     }
   }, [ updateUsersState ])
