@@ -1,5 +1,6 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
+import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import {
   useEffect,
   useState
@@ -40,9 +41,21 @@ import styles from './../../styles/Services.module.css'
 const CreateUser: NextPage = () => {
   const usersOperations = useUsersOperations()
 
+  const router = useRouter()
+
   const [ login, setLogin ] = useState<string>('')
   const [ password, setPassword ] = useState<string>('')
   const [ showPassword, setShowPassword ] = useState<boolean>(false)
+
+  async function handleCreate() {
+    const result = await usersOperations.createUser(login, password)
+
+    if (result) {
+      alert('usuário criado com sucesso!')
+
+      router.push('/users/view')
+    }
+  }
 
   return (
     <>
@@ -145,7 +158,7 @@ const CreateUser: NextPage = () => {
               borderTopLeftRadius: '0px',
               borderTopRightRadius: '0px'
             }}
-            onClick={() => usersOperations.createUser(login, password)}
+            onClick={() => handleCreate()}
           >Criar</Button>
         </Box>
       </main>

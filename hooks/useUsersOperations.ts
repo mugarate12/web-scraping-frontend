@@ -6,13 +6,15 @@ export default function useUsersOperations() {
   const { token } = useAuthUserContext()
 
   async function createUser(login: string, password: string) {
+    console.log(token);
+    
     if (!!login && !!password) {
       return api.post('/users', {
         login,
         password
       }, {
         headers: {
-          'Authentication': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         }
       })
         .then(() => {
@@ -32,7 +34,7 @@ export default function useUsersOperations() {
       password
       }, {
         headers: {
-          'Authentication': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         }
       })
       .then(() => {
@@ -41,6 +43,7 @@ export default function useUsersOperations() {
       .catch(error => {
         alert('usuário não foi atualizado, por favor, tente novamente')
         console.log(error)
+        
         return false
       })
   }
@@ -48,7 +51,7 @@ export default function useUsersOperations() {
   async function removeUser(id: number) {
     return api.delete(`/users/${id}`, {
       headers: {
-        'Authentication': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`
       }
     })
       .then(() => {
@@ -57,6 +60,7 @@ export default function useUsersOperations() {
       .catch(error => {
         alert('usuário não foi deletado, por favor, tente novamente')
         console.log(error)
+
         return false
       })
   }
