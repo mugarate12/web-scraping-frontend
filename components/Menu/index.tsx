@@ -36,6 +36,9 @@ export default function Menu() {
     }
 
     setOpen(false)
+    setOpenUsersOptions(false)
+    setOpenServicesOptions(false)
+
     if (!!pagePath) {
       router.push(pagePath)
     }

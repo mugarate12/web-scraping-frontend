@@ -3,10 +3,8 @@ import { useAuthUserContext } from './../context/authUserContext'
 import api from './../config/axios'
 
 export default function useUsersOperations() {
-  const { token } = useAuthUserContext()
-
   async function createUser(login: string, password: string) {
-    console.log(token);
+    const token = localStorage.getItem('userToken')
     
     if (!!login && !!password) {
       return api.post('/users', {
@@ -30,6 +28,8 @@ export default function useUsersOperations() {
   }
 
   async function updateUser(id: number, password: string) {
+    const token = localStorage.getItem('userToken')
+
     return api.put(`/users/${id}`, {
       password
       }, {
@@ -49,6 +49,8 @@ export default function useUsersOperations() {
   }
 
   async function removeUser(id: number) {
+    const token = localStorage.getItem('userToken')
+    
     return api.delete(`/users/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
