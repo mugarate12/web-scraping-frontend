@@ -51,15 +51,12 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
             updateTime: time.updateTime
           } 
         } else {
-          console.log(time);
           return {
             updateTime: time.updateTime,
             time: time.time
           }
         }
       })
-
-      console.log(times);
 
       setTimeToExecute(times)
     })

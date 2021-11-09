@@ -16,7 +16,6 @@ export default function useServicesUpdateTime() {
 
   useEffect(() => {
     socket.on('routines_update_time', (servicesUpdateTime: Array<servicesUpdateTimeInterface>) => {
-      console.log(servicesUpdateTime);
       setUpdateTime(servicesUpdateTime)
     })
   }, [])
