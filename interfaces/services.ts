@@ -1,5 +1,6 @@
 export interface Service {
   id: number,
   service_name: string,
-  update_time: number
+  update_time: number,
+  habilitado: number
 }

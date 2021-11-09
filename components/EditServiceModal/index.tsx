@@ -22,13 +22,15 @@ import styles from './EditServiceModal.module.css'
 interface UpdateRowData {
   id: number,
   serviceName: string,
-  updateTime: number
+  updateTime: number,
+  able: number
 }
 
 interface Props {
   id: number,
   serviceName: string,
   updateTime: number,
+  able: number,
   setUpdateRowData: Dispatch<SetStateAction<UpdateRowData | undefined>>,
   setUpdateRows: Dispatch<SetStateAction<boolean>>
 }
@@ -37,12 +39,14 @@ export default function EditServiceModal({
   id,
   serviceName,
   updateTime,
+  able,
   setUpdateRowData,
   setUpdateRows
 }: Props) {
   const servicesOperations = useServicesOperations()
 
   const [ time, setTime ] = useState<number>(updateTime)
+  const [ ableService, setAbleService ] = useState<number>(able)
 
   async function handleUpdateTime() {
     const result = await servicesOperations.updateService(id, time)

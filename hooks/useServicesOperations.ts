@@ -1,10 +1,21 @@
+import {
+  Dispatch,
+  SetStateAction
+} from 'react'
+
 import api from './../config/axios'
 
 interface createServiceResponse {
   message: string
 }
 
-export default function useServicesOperations() {
+export default function useServicesOperations(updateServices?: Dispatch<SetStateAction<boolean>>) {
+  function updateInterface() {
+    if (!!updateServices) {
+      updateServices(true)
+    }
+  }
+
   async function createService(serviceName: string, time: number) {
     if (!!serviceName && serviceName.length > 0 && !!time) {
       await api.post('/services', {
@@ -34,6 +45,21 @@ export default function useServicesOperations() {
       })
   }
 
+  async function updateServiceAble(id: number, able: number) {
+    return await api.put(`/services/${id}`, {
+      able: able
+    })
+      .then(() => {
+        updateInterface()
+        return true
+      })
+      .catch(error => {
+        alert('atualização não foi possível, por favor, tente novamente')
+      
+        return false
+      })
+  }
+
   async function removeService(id: number) {
     return await api.delete(`/services/${id}`)
       .then(() => {
@@ -49,6 +75,7 @@ export default function useServicesOperations() {
   return {
     createService,
     updateService,
+    updateServiceAble,
     removeService
   }
 }
