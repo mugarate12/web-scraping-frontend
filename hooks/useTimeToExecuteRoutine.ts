@@ -58,6 +58,7 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
         }
       })
 
+      console.log(times)
       setTimeToExecute(times)
     })
   }

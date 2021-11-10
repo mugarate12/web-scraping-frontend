@@ -55,41 +55,7 @@ const ViewsServices: NextPage = () => {
   const servicesUpdateTime = useServicesUpdateTime()
   const timeToExecuteRoutine = useTimeToExecuteRoutine(servicesUpdateTime)
 
-  const [ isUpdating, setIsUpdating ] = useState<Array<serviceUpdatingInterface>>([])
-
-  function setUpdatingServices() {
-    const provisoryArray: Array<serviceUpdatingInterface> = []
-
-    services.forEach((service) => {
-      provisoryArray.push({
-        id: service.id,
-        isUpdating: false
-      })
-    })
-
-    setIsUpdating(provisoryArray)
-  }
-
-  function setUpdatingSingleService(id: number, value: boolean) {
-    const provisoryArray = isUpdating.map((updating) => {
-      if (updating.id === id) {
-        const updatingNewValue: serviceUpdatingInterface = {
-          id: updating.id,
-          isUpdating: value
-        }
-
-        return updatingNewValue
-      } else {
-        return updating
-      }
-    })
-
-    setIsUpdating(provisoryArray)
-  }
-
-  useEffect(() => {
-    setUpdatingServices()
-  }, [ services ])
+  const [ isUpdating, setIsUpdating ] = useState<Array<number>>([])
 
   function makeServiceURL(serviceName: string) {
     const url = `https://downdetector.com/status/${serviceName}`
@@ -159,10 +125,22 @@ const ViewsServices: NextPage = () => {
     })
   }
 
-  function renderUpdateServiceInformationButtonContent(id: number) {
-    const isUpdatingById = isUpdating.filter((updating) => updating.id === id)
+  function setUpdatingSingleService(id: number) {
+    let copyArray = isUpdating
 
-    if (isUpdatingById[0].isUpdating) {
+    if (copyArray.includes(id)) {
+      copyArray = copyArray.filter((number) => number !== id)
+    } else {
+      copyArray.push(id)
+    }
+
+    setIsUpdating(copyArray)
+  }
+
+  function renderUpdateServiceInformationButtonContent(id: number) {
+    const isUpdatingById = isUpdating.includes(id)
+
+    if (isUpdatingById) {
       return (
         <CircularProgress color="secondary" />
       )
@@ -172,11 +150,11 @@ const ViewsServices: NextPage = () => {
   }
 
   async function updateServiceInformation(id: number, serviceName: string) {
-    setUpdatingSingleService(id, true)
+    setUpdatingSingleService(id)
 
     const result = await servicesOperations.updateServiceInformations(serviceName)
 
-    setUpdatingSingleService(id, false)
+    setUpdatingSingleService(id)
 
     if (result) {
       alert('informações atualizadas com sucesso')
