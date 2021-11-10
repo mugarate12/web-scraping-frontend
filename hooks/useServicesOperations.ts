@@ -60,6 +60,18 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
       })
   }
 
+  async function updateServiceInformations(serviceName: string) {
+    return await api.get(`/service/${serviceName}`)
+      .then(() => {
+        return true
+      })
+      .catch((error) => {
+        alert('algum erro inexperado aconteceu, por favor, tente novamente')
+      
+        return false
+      })
+  }
+
   async function removeService(id: number) {
     return await api.delete(`/services/${id}`)
       .then(() => {
@@ -76,6 +88,7 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
     createService,
     updateService,
     updateServiceAble,
+    updateServiceInformations,
     removeService
   }
 }

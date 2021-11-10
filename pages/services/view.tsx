@@ -10,6 +10,7 @@ import 'moment/locale/pt-br'
 import {
   Box,
   Button,
+  CircularProgress,
   Paper,
   Link
 } from '@material-ui/core'
@@ -40,6 +41,11 @@ interface UpdateRowData {
   able: number
 }
 
+interface serviceUpdatingInterface {
+  id: number,
+  isUpdating: boolean
+}
+
 const ViewsServices: NextPage = () => {
   const [ updateRowData, setUpdateRowData ] = useState<UpdateRowData | undefined>(undefined)
   const [ updateRows, setUpdateRows ] = useState<boolean>(false)
@@ -48,6 +54,42 @@ const ViewsServices: NextPage = () => {
   const servicesOperations = useServicesOperations(setUpdateRows)
   const servicesUpdateTime = useServicesUpdateTime()
   const timeToExecuteRoutine = useTimeToExecuteRoutine(servicesUpdateTime)
+
+  const [ isUpdating, setIsUpdating ] = useState<Array<serviceUpdatingInterface>>([])
+
+  function setUpdatingServices() {
+    const provisoryArray: Array<serviceUpdatingInterface> = []
+
+    services.forEach((service) => {
+      provisoryArray.push({
+        id: service.id,
+        isUpdating: false
+      })
+    })
+
+    setIsUpdating(provisoryArray)
+  }
+
+  function setUpdatingSingleService(id: number, value: boolean) {
+    const provisoryArray = isUpdating.map((updating) => {
+      if (updating.id === id) {
+        const updatingNewValue: serviceUpdatingInterface = {
+          id: updating.id,
+          isUpdating: value
+        }
+
+        return updatingNewValue
+      } else {
+        return updating
+      }
+    })
+
+    setIsUpdating(provisoryArray)
+  }
+
+  useEffect(() => {
+    setUpdatingServices()
+  }, [ services ])
 
   function makeServiceURL(serviceName: string) {
     const url = `https://downdetector.com/status/${serviceName}`
@@ -103,9 +145,7 @@ const ViewsServices: NextPage = () => {
     })
   }
 
-  function handleRow(params: any) {
-    const row = params['row']
-
+  function handleRow(row: any) {
     const id = row.id
     const serviceName = row.col1
     const updateTime = row.col2
@@ -117,6 +157,30 @@ const ViewsServices: NextPage = () => {
       updateTime,
       able
     })
+  }
+
+  function renderUpdateServiceInformationButtonContent(id: number) {
+    const isUpdatingById = isUpdating.filter((updating) => updating.id === id)
+
+    if (isUpdatingById[0].isUpdating) {
+      return (
+        <CircularProgress color="secondary" />
+      )
+    } else {
+      return 'Atualizar dados'
+    }
+  }
+
+  async function updateServiceInformation(id: number, serviceName: string) {
+    setUpdatingSingleService(id, true)
+
+    const result = await servicesOperations.updateServiceInformations(serviceName)
+
+    setUpdatingSingleService(id, false)
+
+    if (result) {
+      alert('informações atualizadas com sucesso')
+    } 
   }
 
   const rows = normalizeData()
@@ -133,7 +197,14 @@ const ViewsServices: NextPage = () => {
         const serviceName: string = cellValues['row']['col1']
 
         return (
-          <Link href={makeServiceURL(serviceName)}>{makeServiceURL(serviceName)}</Link>
+          // <Link href={makeServiceURL(serviceName)}>{makeServiceURL(serviceName)}</Link>
+          <Button 
+            variant="contained" 
+            color='primary'
+            onClick={() => window.open(makeServiceURL(serviceName))}
+          >
+            acessar site
+          </Button>
         )
       },
     },
@@ -158,6 +229,41 @@ const ViewsServices: NextPage = () => {
       },
     },
     { field: 'col5', headerName: 'Status de serviço', width: 150 },
+    { 
+      field: 'col6', 
+      headerName: 'Ações', 
+      width: 280, 
+      disableClickEventBubbling: true, 
+      renderCell: (cellValues: any) => {
+        const row: any = cellValues['row']
+
+        const serviceName: string = row['col1']
+        const id: number = row['id']
+
+        // const able: number = cellValues['row']['able']
+
+        return (
+          <div className={styles.actions_container}>
+            <Button 
+              variant="contained" 
+              color='info'
+              onClick={() => updateServiceInformation(id, serviceName)}
+            >
+              {renderUpdateServiceInformationButtonContent(id)}
+            </Button>
+          
+            <Button 
+              variant="contained" 
+              color='warning'
+              onClick={() => handleRow(row)}
+            >
+              Editar
+            </Button>
+          </div>
+        )
+      },
+    },
+
   ]
 
   function renderEditServiceModal() {
