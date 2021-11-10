@@ -58,7 +58,6 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
         }
       })
 
-      console.log(times)
       setTimeToExecute(times)
     })
   }
@@ -68,18 +67,14 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
   }, [ servicesUpdateTime ])
 
   useEffect(() => {
-    listeningSocket(1)
-    listeningSocket(3)
-    listeningSocket(5)
-    listeningSocket(10)
-    listeningSocket(15)
-  }, [])
-
-  // useEffect(() => {
-  //   socket.on('routines_update_time', (servicesUpdateTime: Array<servicesUpdateTimeInterface>) => {
-  //     getTime()
-  //   })
-  // }, [])
+    if (timeToExecute.length > 0) {
+      listeningSocket(1)
+      listeningSocket(3)
+      listeningSocket(5)
+      listeningSocket(10)
+      listeningSocket(15)
+    }
+  }, [ timeToExecute ])
 
   return timeToExecute
 }
