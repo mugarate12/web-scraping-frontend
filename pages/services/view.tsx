@@ -276,6 +276,11 @@ const ViewsServices: NextPage = () => {
             <DataGrid 
               rows={rows} 
               columns={columns}
+              isRowSelectable={() => false}
+              isCellEditable={() => false}
+              // disableSelectionOnClick={true}
+              // disableColumnSelector={true}
+              // disableDensitySelector={true}
               // onRowClick={(params) => handleRow(params)}
             />
           </div>
