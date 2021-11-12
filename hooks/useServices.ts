@@ -27,7 +27,13 @@ export default function useServices({
   const [ services, setServices ] = useState<Array<Service>>([])
 
   async function getServices() {
-    await api.get<GetServicesResponseInterface>('/services')
+    const token = localStorage.getItem('userToken')
+
+    await api.get<GetServicesResponseInterface>('/services', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(response => {
         setServices(response.data.services)
 
@@ -41,7 +47,11 @@ export default function useServices({
   }
 
   useEffect(() => {
-    getServices()
+    const clientSideRendering = typeof window !== "undefined"
+
+    if (clientSideRendering) {
+      getServices()
+    }
   }, [])
 
   useEffect(() => {

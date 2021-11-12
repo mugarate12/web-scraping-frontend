@@ -17,28 +17,56 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   }
 
   async function createService(serviceName: string, time: number) {
+    const token = localStorage.getItem('userToken')
+    
     if (!!serviceName && serviceName.length > 0 && !!time) {
       await api.post('/services', {
         serviceName,
         updateTime: time
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
         .then(() => {
           alert('serviço irá começar a ser monitorado')
         })
         .catch((error) => {
+          if (error.response) {
+            if (error.response.status === 401) {
+              alert('você não tem autorização pra realizar essa operação')
+
+              return 
+            }
+          }
+
           alert('algum erro inexperado aconteceu, por favor, tente novamente')
         })
     }
   }
 
   async function updateService(id: number, time: number) {
+    const token = localStorage.getItem('userToken')
+
     return await api.put(`/services/${id}`, {
       updateTime: time
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     })
       .then((r) => {
         return true
       })
       .catch(error => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            alert('você não tem autorização pra realizar essa operação')
+
+            return false
+          }
+        }
+
         alert('atualização não foi possível, por favor, tente novamente')
       
         return false
@@ -46,14 +74,28 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   }
 
   async function updateServiceAble(id: number, able: number) {
+    const token = localStorage.getItem('userToken')
+    
     return await api.put(`/services/${id}`, {
       able: able
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     })
       .then(() => {
         updateInterface()
         return true
       })
       .catch(error => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            alert('você não tem autorização pra realizar essa operação')
+
+            return false
+          }
+        }
+
         alert('atualização não foi possível, por favor, tente novamente')
       
         return false
@@ -61,11 +103,25 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   }
 
   async function updateServiceInformations(serviceName: string) {
-    return await api.get(`/service/${serviceName}`)
+    const token = localStorage.getItem('userToken')
+    
+    return await api.get(`/service/${serviceName}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(() => {
         return true
       })
       .catch((error) => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            alert('você não tem autorização pra realizar essa operação')
+
+            return false
+          }
+        }
+
         alert('algum erro inexperado aconteceu, por favor, tente novamente')
       
         return false
@@ -73,11 +129,25 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   }
 
   async function removeService(id: number) {
-    return await api.delete(`/services/${id}`)
+    const token = localStorage.getItem('userToken')
+    
+    return await api.delete(`/services/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(() => {
         return true
       })
       .catch(error => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            alert('você não tem autorização pra realizar essa operação')
+
+            return false
+          }
+        }
+        
         alert('não foi possível remover o serviço, por favor, tente novamente')
 
         return false

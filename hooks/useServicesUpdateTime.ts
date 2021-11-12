@@ -21,7 +21,13 @@ export default function useServicesUpdateTime() {
   const [ updateTime, setUpdateTime ] = useState<Array<servicesUpdateTimeInterface>>([])
 
   async function getServicesUpdateTime() {
-    await api.get<getServicesUpdateTimeInterface>('/services/updateTime')
+    const token = localStorage.getItem('userToken')
+
+    await api.get<getServicesUpdateTimeInterface>('/services/updateTime', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(response => {
         setUpdateTime(response.data.data)
       })
@@ -31,10 +37,11 @@ export default function useServicesUpdateTime() {
   }
 
   useEffect(() => {
-    // socket.on('routines_update_time', (servicesUpdateTime: Array<servicesUpdateTimeInterface>) => {
-    //   setUpdateTime(servicesUpdateTime)
-    // })
-    getServicesUpdateTime()
+    const clientSideRendering = typeof window !== "undefined"
+
+    if (clientSideRendering) {
+      getServicesUpdateTime()
+    }
   }, [])
 
   useEffect(() => {
