@@ -10,12 +10,14 @@ import {
   Autocomplete,
   Button,
   Box,
+  Checkbox,
   Paper,
   InputAdornment,
   IconButton,
   Select,
   MenuItem,
-  TextField
+  TextField,
+  Typography
 } from '@material-ui/core'
 
 import {
@@ -46,9 +48,10 @@ const CreateUser: NextPage = () => {
   const [ login, setLogin ] = useState<string>('')
   const [ password, setPassword ] = useState<string>('')
   const [ showPassword, setShowPassword ] = useState<boolean>(false)
+  const [ isAdmin, setIsAdmin ] = useState<boolean>(false)
 
   async function handleCreate() {
-    const result = await usersOperations.createUser(login, password)
+    const result = await usersOperations.createUser(login, password, isAdmin)
 
     if (result) {
       alert('usuário criado com sucesso!')
@@ -60,7 +63,7 @@ const CreateUser: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Criar serviço</title>
+        <title>Criar Usuário</title>
       </Head>
 
       <main className={styles.container}>
@@ -138,6 +141,27 @@ const CreateUser: NextPage = () => {
                 onChange={(event) => setPassword(event.target.value)}
               />
               
+              <Box
+                component='div'
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center'
+                }}
+              >
+                <Checkbox
+                  checked={isAdmin}
+                  onChange={(event) => setIsAdmin(event.target.checked)}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+
+                <Typography
+                  variant='subtitle2'
+                  component='p'
+                >
+                  Administrador
+                </Typography>
+              </Box>
             </Box>
           </Paper>
 

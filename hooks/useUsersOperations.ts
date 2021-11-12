@@ -3,13 +3,14 @@ import { useAuthUserContext } from './../context/authUserContext'
 import api from './../config/axios'
 
 export default function useUsersOperations() {
-  async function createUser(login: string, password: string) {
+  async function createUser(login: string, password: string, isAdmin: boolean) {
     const token = localStorage.getItem('userToken')
     
     if (!!login && !!password) {
       return api.post('/users', {
         login,
-        password
+        password,
+        isAdmin
       }, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -19,6 +20,15 @@ export default function useUsersOperations() {
           return true
         })
         .catch(error => {
+          if (error.response) {
+            if (error.response.status === 401) {
+              alert('você não tem autorização pra realizar essa operação')
+
+              return false
+            }
+          } 
+
+          
           alert('não foi possível criar usuário, por favor, tente novamente')
           console.log(error)
           return false
