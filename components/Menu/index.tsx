@@ -16,6 +16,7 @@ import {
 import {
   ArrowUpward,
   ArrowDownward,
+  ExitToApp,
   Person,
   PersonalVideo
 } from '@material-ui/icons'
@@ -112,6 +113,12 @@ export default function Menu() {
     }
   }
 
+  function exitApp() {
+    localStorage.removeItem('userToken')
+    setOpen(false)
+    router.push('/')
+  }
+
   function renderMenu() {
     if (router.pathname !== '/') {
       return (
@@ -156,6 +163,18 @@ export default function Menu() {
               </ListItem>
 
               {renderServicesOptions()}
+              
+              <ListItem 
+                button
+                onClick={(event) => handleOption(event, () => exitApp())}
+                onKeyDown={(event) => handleOption(event, () => exitApp())}
+                >
+                <ListItemIcon>
+                  <ExitToApp />
+                </ListItemIcon>
+
+                <ListItemText primary='Sair'/>
+              </ListItem>
             </List>
           </Box>
         </Drawer>
