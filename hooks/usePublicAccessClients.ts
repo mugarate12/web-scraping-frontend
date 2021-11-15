@@ -5,6 +5,10 @@ import {
   SetStateAction
 } from 'react'
 
+import {
+  useAlert
+} from './'
+
 import api from './../config/axios'
 
 import { clientInformationData } from './../interfaces/publicAccessClients'
@@ -24,6 +28,8 @@ export default function usePublicAccessClients({
 }: Params) {
   const [ clients, setClients ] = useState<Array<clientInformationData>>([])
 
+  const alertHook = useAlert()
+
   async function getClients() {
     const token = localStorage.getItem('userToken')
 
@@ -36,6 +42,14 @@ export default function usePublicAccessClients({
         setClients(response.data.data)
       })
       .catch(error => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            alertHook.showAlert('você não tem autorização pra realizar essa operação', 'error')
+
+            return 
+          }
+        }
+
         console.log(error)
       })
   }

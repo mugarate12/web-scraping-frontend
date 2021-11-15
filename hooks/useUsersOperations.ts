@@ -1,8 +1,14 @@
 import { useAuthUserContext } from './../context/authUserContext'
 
+import {
+  useAlert
+} from './'
+
 import api from './../config/axios'
 
 export default function useUsersOperations() {
+  const alertHook = useAlert()
+
   async function createUser(login: string, password: string, isAdmin: boolean) {
     const token = localStorage.getItem('userToken')
     
@@ -22,14 +28,13 @@ export default function useUsersOperations() {
         .catch(error => {
           if (error.response) {
             if (error.response.status === 401) {
-              alert('você não tem autorização pra realizar essa operação')
+              alertHook.showAlert('você não tem autorização pra realizar essa operação', 'error')
 
               return false
             }
           } 
 
-          
-          alert('não foi possível criar usuário, por favor, tente novamente')
+          alertHook.showAlert('não foi possível criar usuário, por favor, tente novamente', 'error')
           console.log(error)
           return false
         })
@@ -51,7 +56,7 @@ export default function useUsersOperations() {
         return true
       })
       .catch(error => {
-        alert('usuário não foi atualizado, por favor, tente novamente')
+        alertHook.showAlert('usuário não foi atualizado, por favor, tente novamente', 'error')
         console.log(error)
         
         return false
@@ -70,7 +75,7 @@ export default function useUsersOperations() {
         return true
       })
       .catch(error => {
-        alert('usuário não foi deletado, por favor, tente novamente')
+        alertHook.showAlert('usuário não foi deletado, por favor, tente novamente', 'error')
         console.log(error)
 
         return false

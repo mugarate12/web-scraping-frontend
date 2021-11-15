@@ -29,6 +29,7 @@ import {
 } from '@material-ui/icons'
 
 import {
+  useAlert,
   useUsersOperations
 } from './../../hooks'
 
@@ -43,6 +44,7 @@ import styles from './../../styles/Services.module.css'
 const CreateUser: NextPage = () => {
   const usersOperations = useUsersOperations()
 
+  const alertHook = useAlert()
   const router = useRouter()
 
   const [ login, setLogin ] = useState<string>('')
@@ -54,7 +56,7 @@ const CreateUser: NextPage = () => {
     const result = await usersOperations.createUser(login, password, isAdmin)
 
     if (result) {
-      alert('usuário criado com sucesso!')
+      alertHook.showAlert('usuário criado com sucesso!', 'success')
 
       router.push('/users/view')
     }

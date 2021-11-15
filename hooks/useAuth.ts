@@ -2,6 +2,10 @@ import { useRouter } from 'next/router'
 
 import { useAuthUserContext } from './../context/authUserContext'
 
+import {
+  useAlert
+} from './'
+
 import api from './../config/axios'
 
 interface SessionResponse {
@@ -11,6 +15,8 @@ interface SessionResponse {
 
 export default function useAuth() {
   const { setToken } = useAuthUserContext()
+
+  const alertHook = useAlert()
 
   const router = useRouter()
 
@@ -27,10 +33,10 @@ export default function useAuth() {
           router.push('/services/create')
         })
         .catch(error => {
-          alert('verifique sua conexão com a internet ou seus dados')
+          alertHook.showAlert('verifique sua conexão com a internet ou seus dados', 'error')
         })
     } else {
-      alert('preencha todos os campos, por favor')
+      alertHook.showAlert('preencha todos os campos, por favor', 'warning')
     }
   }
 

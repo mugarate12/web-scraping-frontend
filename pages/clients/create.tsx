@@ -46,8 +46,7 @@ const CreateClient: NextPage = () => {
       const result = await publicAccessClientsOperations.create(identifier)
 
       if (result) {
-        alertOperation.showAlert('cliente criado com sucesso!')
-        // alert ('cliente criado com sucesso!')
+        alertOperation.showAlert('cliente criado com sucesso!', 'success')
       }
     }
   }

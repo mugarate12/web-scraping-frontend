@@ -5,6 +5,11 @@ import {
   SetStateAction
 } from 'react'
 
+import {
+  useAlert
+} from './'
+
+
 import api from './../config/axios'
 
 interface Params {
@@ -14,6 +19,8 @@ interface Params {
 export default function usePublicAccessClientsOperations({
   setUpdateState
 }: Params) {
+  const alertHook = useAlert()
+
   function setToUpdateState() {
     if (!!setUpdateState) {
       setUpdateState(true)
@@ -38,7 +45,7 @@ export default function usePublicAccessClientsOperations({
       .catch(error => {
         console.log(error)
 
-        alert('erro ao criar cliente, por favor, tente novamente!')
+        alertHook.showAlert('erro ao criar cliente, por favor, tente novamente!', 'error')
 
         return false
       })
@@ -60,7 +67,7 @@ export default function usePublicAccessClientsOperations({
       .catch(error => {
         console.log(error)
 
-        alert('erro ao remover cliente, por favor, tente novamente!')
+        alertHook.showAlert('erro ao remover cliente, por favor, tente novamente!', 'error')
 
         return false
       })

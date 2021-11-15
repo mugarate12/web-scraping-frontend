@@ -3,6 +3,10 @@ import {
   SetStateAction
 } from 'react'
 
+import {
+  useAlert
+} from './'
+
 import api from './../config/axios'
 
 interface createServiceResponse {
@@ -10,6 +14,8 @@ interface createServiceResponse {
 }
 
 export default function useServicesOperations(updateServices?: Dispatch<SetStateAction<boolean>>) {
+  const alertHook = useAlert()
+  
   function updateInterface() {
     if (!!updateServices) {
       updateServices(true)
@@ -29,18 +35,21 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
         }
       })
         .then(() => {
-          alert('serviço irá começar a ser monitorado')
+          alertHook.showAlert('serviço irá começar a ser monitorado', 'success')
+
+          return true
         })
         .catch((error) => {
           if (error.response) {
             if (error.response.status === 401) {
-              alert('você não tem autorização pra realizar essa operação')
+              alertHook.showAlert('você não tem autorização pra realizar essa operação', 'error')
 
-              return 
+              return false
             }
           }
 
-          alert('algum erro inexperado aconteceu, por favor, tente novamente')
+          alertHook.showAlert('algum erro inexperado aconteceu, por favor, tente novamente', 'error')
+          return false
         })
     }
   }
@@ -61,13 +70,13 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
       .catch(error => {
         if (error.response) {
           if (error.response.status === 401) {
-            alert('você não tem autorização pra realizar essa operação')
+            alertHook.showAlert('você não tem autorização pra realizar essa operação', 'error')
 
             return false
           }
         }
 
-        alert('atualização não foi possível, por favor, tente novamente')
+        alertHook.showAlert('atualização não foi possível, por favor, tente novamente', 'error')
       
         return false
       })
@@ -90,13 +99,13 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
       .catch(error => {
         if (error.response) {
           if (error.response.status === 401) {
-            alert('você não tem autorização pra realizar essa operação')
+            alertHook.showAlert('você não tem autorização pra realizar essa operação', 'error')
 
             return false
           }
         }
 
-        alert('atualização não foi possível, por favor, tente novamente')
+        alertHook.showAlert('atualização não foi possível, por favor, tente novamente', 'error')
       
         return false
       })
@@ -116,13 +125,13 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
       .catch((error) => {
         if (error.response) {
           if (error.response.status === 401) {
-            alert('você não tem autorização pra realizar essa operação')
+            alertHook.showAlert('você não tem autorização pra realizar essa operação', 'error')
 
             return false
           }
         }
 
-        alert('algum erro inexperado aconteceu, por favor, tente novamente')
+        alertHook.showAlert('algum erro inexperado aconteceu, por favor, tente novamente', 'error')
       
         return false
       })
@@ -142,13 +151,13 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
       .catch(error => {
         if (error.response) {
           if (error.response.status === 401) {
-            alert('você não tem autorização pra realizar essa operação')
+            alertHook.showAlert('você não tem autorização pra realizar essa operação', 'error')
 
             return false
           }
         }
         
-        alert('não foi possível remover o serviço, por favor, tente novamente')
+        alertHook.showAlert('não foi possível remover o serviço, por favor, tente novamente', 'error')
 
         return false
       })

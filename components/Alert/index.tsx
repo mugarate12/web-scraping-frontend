@@ -1,4 +1,5 @@
 import {
+  Alert as AlertMUI,
   Button,
   IconButton,
   Snackbar
@@ -14,6 +15,7 @@ export default function Alert() {
   const { 
     open,
     message,
+    type,
     setOpen
   } = useAlertContext()
 
@@ -58,9 +60,13 @@ export default function Alert() {
         open={open}
         autoHideDuration={10000}
         onClose={handleClose}
-        message={message}
+        // message={message}
         action={action}
-      />
+      >
+        <AlertMUI onClose={handleClose} severity={type} sx={{ width: '100%' }}>
+          {message}
+        </AlertMUI>
+      </Snackbar>
     </div>
   )
 }
