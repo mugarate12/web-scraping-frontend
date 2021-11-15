@@ -119,13 +119,13 @@ export default function Menu() {
     if (openClientsOptions) {
       return (
         <>
-          {/* <ListItem 
+          <ListItem 
             button 
-            onClick={(event) => toggleDrawer(event, '/users/create')}
-            onKeyDown={(event) => toggleDrawer(event, '/users/create')}
+            onClick={(event) => toggleDrawer(event, '/clients/create')}
+            onKeyDown={(event) => toggleDrawer(event, '/clients/create')}
           >
-            <ListItemText primary='criar usuário' sx={{ marginLeft: '20px' }}/>
-          </ListItem> */}
+            <ListItemText primary='criar cliente' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
           
           <ListItem 
             button 
