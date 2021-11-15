@@ -15,19 +15,23 @@ export default function useAuth() {
   const router = useRouter()
 
   async function login(login: string, password: string) {
-    await api.post<SessionResponse>('/session', {
-      login,
-      password
-    })
-      .then(response => {
-        localStorage.setItem('userToken', response.data.token)
-        setToken(response.data.token)
-
-        router.push('/services/create')
+    if (!!login && !!password && login.length > 0 && password.length > 0) {
+      await api.post<SessionResponse>('/session', {
+        login,
+        password
       })
-      .catch(error => {
-        alert('verifique sua conexão com a internet ou seus dados')
-      })
+        .then(response => {
+          localStorage.setItem('userToken', response.data.token)
+          setToken(response.data.token)
+  
+          router.push('/services/create')
+        })
+        .catch(error => {
+          alert('verifique sua conexão com a internet ou seus dados')
+        })
+    } else {
+      alert('preencha todos os campos, por favor')
+    }
   }
 
   return {

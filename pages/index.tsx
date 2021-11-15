@@ -126,6 +126,11 @@ const Home: NextPage = () => {
                 label="login"
                 value={login}
                 onChange={(event) => setLogin(event.target.value)}
+                onKeyPress={(event) => {
+                  if (event.code === 'Enter') {
+                    authentication.login(login, password)
+                  }
+                }}
               />
 
               <TextField
@@ -154,6 +159,11 @@ const Home: NextPage = () => {
                 label="senha"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                onKeyPress={(event) => {
+                  if (event.code === 'Enter') {
+                    authentication.login(login, password)
+                  }
+                }}
               />
             </Box>
           </Paper>
