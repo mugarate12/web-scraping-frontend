@@ -21,6 +21,7 @@ import {
 } from '@material-ui/icons'
 
 import {
+  useAlert,
   useOptions,
   usePublicAccessClientsOperations
 } from './../../hooks'
@@ -35,6 +36,7 @@ import styles from './../../styles/Services.module.css'
 
 const CreateClient: NextPage = () => {
   const options = useOptions()
+  const alertOperation = useAlert()
   const publicAccessClientsOperations = usePublicAccessClientsOperations({})
 
   const [ identifier, setIdentifier ] = useState<string>('')
@@ -44,7 +46,8 @@ const CreateClient: NextPage = () => {
       const result = await publicAccessClientsOperations.create(identifier)
 
       if (result) {
-        alert ('cliente criado com sucesso!')
+        alertOperation.showAlert('cliente criado com sucesso!')
+        // alert ('cliente criado com sucesso!')
       }
     }
   }

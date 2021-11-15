@@ -4,6 +4,7 @@ import Head from 'next/head'
 import ContextWrapper from '../context'
 
 import {
+  Alert,
   Header,
   Menu
 } from './../components'
@@ -21,6 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <ContextWrapper>
+        <Alert />
         <Header />
         <Menu />
 

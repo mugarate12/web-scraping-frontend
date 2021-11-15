@@ -1,3 +1,4 @@
+import useAlert from "./useAlert"
 import useAuth from "./useAuth"
 import useOptions from "./useOptions"
 import usePublicAccessClients from "./usePublicAccessClients"
@@ -11,6 +12,7 @@ import useUsers from "./useUsers"
 import useUsersOperations from "./useUsersOperations"
 
 export {
+  useAlert,
   useAuth,
   useOptions,
   usePublicAccessClients,

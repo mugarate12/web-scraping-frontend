@@ -1,3 +1,4 @@
+import AlertContextWrapper from "./AlertContext"
 import AuthUserContextWrapper from "./authUserContext"
 import MenuContext from './menuContext'
 
@@ -9,10 +10,12 @@ export default function ContextWrapper({
   children
 }: Props) {
   return (
-    <AuthUserContextWrapper>
-      <MenuContext>
-        { children }
-      </MenuContext>
-    </AuthUserContextWrapper>
+    <AlertContextWrapper>
+      <AuthUserContextWrapper>
+        <MenuContext>
+          { children }
+        </MenuContext>
+      </AuthUserContextWrapper>
+    </AlertContextWrapper>
   )
 }
