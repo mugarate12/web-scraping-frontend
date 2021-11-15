@@ -1,0 +1,35 @@
+.container {
+  height: calc(100vh - 64px);
+  width: 100%;
+
+  margin-top: 64px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.key_container {
+  position: relative;
+
+  width: 140px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.key_text {
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.key_button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}

@@ -17,6 +17,7 @@ import {
   ArrowUpward,
   ArrowDownward,
   ExitToApp,
+  VpnKey,
   Person,
   PersonalVideo
 } from '@material-ui/icons'
@@ -28,6 +29,7 @@ export default function Menu() {
 
   const [ openUsersOptions, setOpenUsersOptions ] = useState<boolean>(false)
   const [ openServicesOptions, setOpenServicesOptions ] = useState<boolean>(false)
+  const [ openClientsOptions, setOpenClientsOptions ] = useState<boolean>(false)
 
   const router = useRouter()
 
@@ -112,6 +114,30 @@ export default function Menu() {
       )
     }
   }
+  
+  function renderClientsOptions() {
+    if (openClientsOptions) {
+      return (
+        <>
+          {/* <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/users/create')}
+            onKeyDown={(event) => toggleDrawer(event, '/users/create')}
+          >
+            <ListItemText primary='criar usuário' sx={{ marginLeft: '20px' }}/>
+          </ListItem> */}
+          
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/clients')}
+            onKeyDown={(event) => toggleDrawer(event, '/clients')}
+          >
+            <ListItemText primary='Ver clientes' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
+        </>
+      )
+    }
+  }
 
   function exitApp() {
     localStorage.removeItem('userToken')
@@ -163,6 +189,22 @@ export default function Menu() {
               </ListItem>
 
               {renderServicesOptions()}
+             
+              <ListItem 
+                button
+                onClick={(event) => handleOption(event, () => setOpenClientsOptions(!openClientsOptions))}
+                onKeyDown={(event) => handleOption(event, () => setOpenClientsOptions(!openClientsOptions))}
+                >
+                <ListItemIcon>
+                  <VpnKey />
+                </ListItemIcon>
+
+                <ListItemText primary='Clients'/>
+
+                {renderArrow(openClientsOptions)}
+              </ListItem>
+
+              {renderClientsOptions()}
               
               <ListItem 
                 button

@@ -47,6 +47,8 @@ export default function Header() {
       return 'Serviços'
     } else if (router.pathname.includes('users')) {
       return 'Usuários'
+    } else if (router.pathname.includes('clients')) {
+      return 'Clientes'
     }
   }
 
