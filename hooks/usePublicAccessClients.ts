@@ -39,6 +39,7 @@ export default function usePublicAccessClients({
       }
     })
       .then(response => {
+        console.log(response.data.data);
         setClients(response.data.data)
       })
       .catch(error => {

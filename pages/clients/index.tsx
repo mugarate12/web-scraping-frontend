@@ -25,10 +25,11 @@ import {
 } from '@material-ui/icons'
 
 import {
-  EditServiceModal
+  EditClientModal
 } from './../../components'
 
 import {
+  useAlert,
   usePublicAccessClients,
   usePublicAccessClientsOperations,
   useServices,
@@ -49,9 +50,15 @@ interface UpdateRowData {
 }
 
 const ViewClients: NextPage = () => {
+  const alertHook = useAlert()
+
   const [ updateRowData, setUpdateRowData ] = useState<UpdateRowData | undefined>(undefined)
   const [ updateRows, setUpdateRows ] = useState<boolean>(false)
 
+  const [ showUpdateClientModal, setShowUpdateClientModal ] = useState<boolean>(false)
+  const [ clientIDToUpdate, setClientIDToUpdate ] = useState<number>(0)
+  const [ nameOfClientToUpdate, setNameOfClientToUpdate ] = useState<string>('')
+ 
   const clients = usePublicAccessClients({ updateState: updateRows })
   const clientsOperations = usePublicAccessClientsOperations({ setUpdateState: setUpdateRows })
   
@@ -66,6 +73,7 @@ const ViewClients: NextPage = () => {
         id: client.id,
         col1: client.identifier,
         col2: client.key,
+        able: client.able
       }
     })
   }
@@ -81,6 +89,27 @@ const ViewClients: NextPage = () => {
 
     if (result) {
       alert('cliente removido com sucesso!')
+    }
+  }
+
+  async function updateClient(clientID: number, able: number) {
+    const result = await clientsOperations.update(clientID, { able })
+
+    if (result) {
+      alertHook.showAlert('cliente atualizado com sucesso!', 'success')
+    }
+  }
+
+  function renderClientModal() {
+    if (showUpdateClientModal && clientIDToUpdate > 0 && nameOfClientToUpdate.length > 0) {
+      return (
+        <EditClientModal
+          clientID={clientIDToUpdate}
+          name={nameOfClientToUpdate}
+          setUpdateRows={setUpdateRows}
+          setShowUpdateClientModal={setShowUpdateClientModal}
+        />
+      )
     }
   }
 
@@ -119,16 +148,56 @@ const ViewClients: NextPage = () => {
     },
     {
       field: 'col3',
-      headerName: 'Ações',
+      headerName: 'Habilitados',
       width: 150,
       disableClickEventBubbling: true,
       renderCell: (cellValues: any) => {
         const row = cellValues['row']
+
+        const id: number = row['id']
+        const identifier: string = row['col1']
+        const key: string = row['col2']
+        const able: number = row['able']
+
+        return (
+          <div className={styles.key_container}>
+            <Button 
+              variant="contained" 
+              color={able === 1 ? 'success' : 'error'}
+              onClick={() => updateClient(id, able === 1 ? 2 : 1)}
+            >
+              {able === 1 ? 'Habilitado' : 'Desabilitado'}
+            </Button>
+          </div>
+        )
+      }
+    },
+    {
+      field: 'col4',
+      headerName: 'Ações',
+      width: 200,
+      disableClickEventBubbling: true,
+      renderCell: (cellValues: any) => {
+        const row = cellValues['row']
+
+        const id: number = row['id']
         const identifier: string = row['col1']
         const key: string = row['col2']
 
         return (
           <div className={styles.key_container}>
+            <Button 
+              variant="contained" 
+              color='warning'
+              onClick={() => {
+                setClientIDToUpdate(id)
+                setNameOfClientToUpdate(identifier)
+                setShowUpdateClientModal(true)
+              }}
+            >
+              Editar
+            </Button>
+
             <Button 
               variant="contained" 
               color='error'
@@ -222,6 +291,8 @@ const ViewClients: NextPage = () => {
       <Head>
         <title>Visualizar Clientes</title>
       </Head>
+
+      {renderClientModal()}
 
       <main className={styles.container}>
           <div style={{ 
