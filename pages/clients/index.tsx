@@ -79,9 +79,25 @@ const ViewClients: NextPage = () => {
   }
 
   async function clipToClipboard(content: string) {
-    await navigator.clipboard.writeText(content)
-
-    alert('chave copiada!')
+    if (typeof (navigator.clipboard) == 'undefined') {
+      let textArea = document.createElement('textarea')
+      
+      textArea.value = content
+      textArea.style.position = "fixed"
+      document.body.appendChild(textArea)
+  
+      textArea.focus()
+      textArea.select()
+  
+      document.execCommand('copy')
+  
+      document.body.removeChild(textArea)
+      
+      alertHook.showAlert('chave copiada!', 'success')
+    } else {
+      await navigator.clipboard.writeText(content)
+      alertHook.showAlert('chave copiada!', 'success')
+    }
   }
 
   async function removeClient(identifier: string) {
