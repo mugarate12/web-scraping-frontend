@@ -30,6 +30,14 @@ yarn dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ### Para executar o projeto em modo de produção:
+1. build o projeto 
+```bash
+npm run build
+# or
+yarn run build
+```
+
+2. rode o servidor que será ouvido na porta 3000
 ```bash
 npm start
 # or

@@ -76,7 +76,6 @@ export default function useUsersOperations() {
       })
       .catch(error => {
         alertHook.showAlert('usuário não foi deletado, por favor, tente novamente', 'error')
-        console.log(error)
 
         return false
       })
