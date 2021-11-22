@@ -76,7 +76,7 @@ export default function Menu() {
             onClick={(event) => toggleDrawer(event, '/services/create')}
             onKeyDown={(event) => toggleDrawer(event, '/services/create')}
           >
-            <ListItemText primary='criar serviço' sx={{ marginLeft: '20px' }}/>
+            <ListItemText primary='Criar Serviço' sx={{ marginLeft: '20px' }}/>
           </ListItem>
           
           <ListItem 
@@ -84,7 +84,7 @@ export default function Menu() {
             onClick={(event) => toggleDrawer(event, '/services/view')}
             onKeyDown={(event) => toggleDrawer(event, '/services/view')}
           >
-            <ListItemText primary='ver serviços' sx={{ marginLeft: '20px' }}/>
+            <ListItemText primary='Ver Serviços' sx={{ marginLeft: '20px' }}/>
           </ListItem>
         </>
       )
@@ -100,7 +100,7 @@ export default function Menu() {
             onClick={(event) => toggleDrawer(event, '/users/create')}
             onKeyDown={(event) => toggleDrawer(event, '/users/create')}
           >
-            <ListItemText primary='criar usuário' sx={{ marginLeft: '20px' }}/>
+            <ListItemText primary='Criar Usuário' sx={{ marginLeft: '20px' }}/>
           </ListItem>
           
           <ListItem 
@@ -108,7 +108,7 @@ export default function Menu() {
             onClick={(event) => toggleDrawer(event, '/users/view')}
             onKeyDown={(event) => toggleDrawer(event, '/users/view')}
           >
-            <ListItemText primary='ver usuários' sx={{ marginLeft: '20px' }}/>
+            <ListItemText primary='Ver Usuários' sx={{ marginLeft: '20px' }}/>
           </ListItem>
         </>
       )
@@ -124,7 +124,7 @@ export default function Menu() {
             onClick={(event) => toggleDrawer(event, '/clients/create')}
             onKeyDown={(event) => toggleDrawer(event, '/clients/create')}
           >
-            <ListItemText primary='criar cliente' sx={{ marginLeft: '20px' }}/>
+            <ListItemText primary='Criar Cliente' sx={{ marginLeft: '20px' }}/>
           </ListItem>
           
           <ListItem 
@@ -132,7 +132,7 @@ export default function Menu() {
             onClick={(event) => toggleDrawer(event, '/clients')}
             onKeyDown={(event) => toggleDrawer(event, '/clients')}
           >
-            <ListItemText primary='Ver clientes' sx={{ marginLeft: '20px' }}/>
+            <ListItemText primary='Ver Clientes' sx={{ marginLeft: '20px' }}/>
           </ListItem>
         </>
       )
@@ -145,6 +145,15 @@ export default function Menu() {
     router.push('/')
   }
 
+  function goToApiPage() {
+    const developmentURL = 'http://localhost:3333'
+    const productionURL = String(process.env.PRODUCTION_BASE_URL)
+
+    const goTo = process.env.NODE_ENV === 'development' ? developmentURL : productionURL
+
+    window.open(`${goTo}/public/docs/`, '_blank')
+  }
+
   function renderMenu() {
     if (router.pathname !== '/') {
       return (
@@ -154,10 +163,19 @@ export default function Menu() {
           onClose={(event) => toggleDrawer(event)}
         >
           <Box
-            sx={{ width: 'auto', minWidth: '200px' }}
+            sx={{
+              position: 'relative',
+              width: 'auto', 
+              minWidth: '200px',
+              height: '100%'
+            }}
             role="presentation"
           >
-            <List>
+            <List
+              sx={{
+                height: '100%'
+              }}
+            >
               <ListItem 
                 button
                 onClick={(event) => handleOption(event, () => setOpenUsersOptions(!openUsersOptions))}
@@ -199,7 +217,7 @@ export default function Menu() {
                   <VpnKey />
                 </ListItemIcon>
 
-                <ListItemText primary='Clients'/>
+                <ListItemText primary='Clientes'/>
 
                 {renderArrow(openClientsOptions)}
               </ListItem>
@@ -216,6 +234,22 @@ export default function Menu() {
                 </ListItemIcon>
 
                 <ListItemText primary='Sair'/>
+              </ListItem>
+
+              <ListItem
+                sx={{
+                  position: 'absolute',
+                  bottom: '0px',
+                  cursor: 'pointer'
+                }}
+                onClick={(event) => handleOption(event, () => goToApiPage())}
+                onKeyDown={(event) => handleOption(event, () => goToApiPage())}
+              >
+                <ListItemIcon>
+                  <VpnKey />
+                </ListItemIcon>
+
+                <ListItemText primary='Documentação da API pública'/>
               </ListItem>
             </List>
           </Box>
