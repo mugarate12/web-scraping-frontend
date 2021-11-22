@@ -104,7 +104,7 @@ const ViewClients: NextPage = () => {
     const result = await clientsOperations.remove(identifier)
 
     if (result) {
-      alert('cliente removido com sucesso!')
+      alertHook.showAlert('cliente removido com sucesso!', 'success')
     }
   }
 
@@ -133,7 +133,6 @@ const ViewClients: NextPage = () => {
 
   const columns = [
     { field: 'col1', headerName: 'Cliente', width: 150 },
-    // { field: 'col2', headerName: 'Chave', width: 150 },
     {
       field: 'col2',
       headerName: 'Chave',
@@ -225,81 +224,6 @@ const ViewClients: NextPage = () => {
         )
       }
     }
-    // { 
-    //   field: 'col3', 
-    //   headerName: 'Link', 
-    //   width: 150, 
-    //   disableClickEventBubbling: true, 
-    //   // renderCell: (cellValues: any) => {
-    //   //   const serviceName: string = cellValues['row']['col1']
-
-    //   //   return (
-    //   //     // <Link href={makeServiceURL(serviceName)}>{makeServiceURL(serviceName)}</Link>
-    //   //     <Button 
-    //   //       variant="contained" 
-    //   //       color='primary'
-    //   //       onClick={() => window.open(makeServiceURL(serviceName))}
-    //   //     >
-    //   //       acessar site
-    //   //     </Button>
-    //   //   )
-    //   // },
-    // },
-    // { 
-    //   field: 'col4', 
-    //   headerName: 'Serviço', 
-    //   width: 150, 
-    //   disableClickEventBubbling: true, 
-    //   // renderCell: (cellValues: any) => {
-    //   //   const id: number = cellValues['row']['id']
-    //   //   const able: number = cellValues['row']['able']
-
-    //   //   return (
-    //   //     <Button 
-    //   //       variant="contained" 
-    //   //       color={returnServiceAbleColorType(able)}
-    //   //       onClick={() => serviceAbleOnClick(id, able)}
-    //   //     >
-    //   //       {renderServiceAbleText(able)}
-    //   //     </Button>
-    //   //   )
-    //   // },
-    // },
-    // { field: 'col5', headerName: 'Status de serviço', width: 150 },
-    // { 
-    //   field: 'col6', 
-    //   headerName: 'Ações', 
-    //   width: 280, 
-    //   disableClickEventBubbling: true, 
-    //   // renderCell: (cellValues: any) => {
-    //   //   const row: any = cellValues['row']
-
-    //   //   const serviceName: string = row['col1']
-    //   //   const id: number = row['id']
-
-    //   //   // const able: number = cellValues['row']['able']
-
-    //   //   return (
-    //   //     <div className={styles.actions_container}>
-    //   //       <Button 
-    //   //         variant="contained" 
-    //   //         color='info'
-    //   //         onClick={() => updateServiceInformation(id, serviceName)}
-    //   //       >
-    //   //         {renderUpdateServiceInformationButtonContent(id)}
-    //   //       </Button>
-          
-    //   //       <Button 
-    //   //         variant="contained" 
-    //   //         color='warning'
-    //   //         onClick={() => handleRow(row)}
-    //   //       >
-    //   //         Editar
-    //   //       </Button>
-    //   //     </div>
-    //   //   )
-    //   // },
-    // },
   ]
 
   return (

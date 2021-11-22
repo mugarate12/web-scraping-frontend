@@ -24,6 +24,7 @@ import {
 } from './../../components'
 
 import {
+  useAlert,
   useServices,
   useServicesOperations,
   useServicesUpdateTime,
@@ -47,6 +48,8 @@ interface serviceUpdatingInterface {
 }
 
 const ViewsServices: NextPage = () => {
+  const alertHook = useAlert()
+
   const [ updateRowData, setUpdateRowData ] = useState<UpdateRowData | undefined>(undefined)
   const [ updateRows, setUpdateRows ] = useState<boolean>(false)
   
@@ -157,6 +160,7 @@ const ViewsServices: NextPage = () => {
     setUpdatingSingleService(id)
 
     if (result) {
+      alertHook.showAlert('cliente atualizado com sucesso!', 'success')
       alert('informações atualizadas com sucesso')
     } 
   }
