@@ -47,7 +47,7 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
     const actualTime = moment()
     
     const times = servicesUpdateTime.map((serviceUpdateTime) => {
-      console.log(serviceUpdateTime.routine, moment(serviceUpdateTime.last_execution).milliseconds())
+      console.log(serviceUpdateTime.routine, serviceUpdateTime.last_execution)
 
       return {
         updateTime: serviceUpdateTime.routine,
@@ -56,67 +56,6 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
     })
 
     setTimeToExecute(times)
-  }
-
-  async function UpdateTime() {
-    let dates: routines = {
-      1: { time: 60, timer: '00:60'},
-      3: { time: 60, timer: '02:60' },
-      5: { time: 60, timer: '04:60' }, 
-      10: { time: 60, timer: '09:60' },
-      15: { time: 60, timer: '14:60' }
-    }
-
-    servicesUpdateTime.forEach(service => {
-      const actualDate = moment()
-
-      if (service.routine === 1) {
-        const lastExecutionMoment =  moment(service.last_execution)
-        const duration = moment.duration(actualDate.diff(lastExecutionMoment))
-
-        dates[1] = {
-          time: 60,
-          timer: `${duration.minutes()}:${duration.seconds()}`
-        }
-      }
-    })
-
-    setRoutines(dates)
-    console.log(dates[1])
-
-    // const actualTime = moment()
-    // const addThreeMinutes = moment().add(3, 'minutes')
-
-    // const duration = moment.duration(addThreeMinutes.diff(actualTime))
-    // // console.log('duration', duration.minutes())
-    // // console.log('duration seconds', duration.seconds())
-
-    // await sleep(2000)
-    //   .then(() => {
-    //     const oneMinute = {
-    //       time: routines[1].time === 0 ? 60 : routines[1].time - 1,
-    //       timer: routines[1].time === 0 ? '00:60' : `00:${routines[1].time - 1}`
-    //     }
-    
-    //     setRoutines({
-    //       1: oneMinute,
-    //       3: routines[3],
-    //       5: routines[5],
-    //       10: routines[10],
-    //       15: routines[15]
-    //     })
-
-    //   })
-
-  }
-
-  function getUpdateTime() {
-    // const actualTime = moment()
-    // const timeMoreOneMinute = moment().add(1, 'minutes')
-
-    // console.log(actualTime.format('HH:mm:ss'));
-    // console.log(timeMoreOneMinute.seconds(0).format('HH:mm:ss'))
-    // console.log(actualTime.format('HH:mm:ss').split(':')[2], timeMoreOneMinute.seconds(0).format('HH:mm:ss').split(':')[2])
   }
 
   function listeningSocket(updateTime: number) {
@@ -149,26 +88,16 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
     getTime()
   }, [ servicesUpdateTime ])
 
-  useEffect(() => {
-    if (servicesUpdateTime.length > 0) {
-      // UpdateTime()
-    }
-  }, [ servicesUpdateTime ])
 
-  useEffect(() => {
-    // console.log(routines[1])
-    // UpdateTime()
-  }, [ routines ])
-
-  useEffect(() => {
-    if (timeToExecute.length > 0) {
-      listeningSocket(1)
-      listeningSocket(3)
-      listeningSocket(5)
-      listeningSocket(10)
-      listeningSocket(15)
-    }
-  }, [ timeToExecute ])
+  // useEffect(() => {
+  //   if (timeToExecute.length > 0) {
+  //     listeningSocket(1)
+  //     listeningSocket(3)
+  //     listeningSocket(5)
+  //     listeningSocket(10)
+  //     listeningSocket(15)
+  //   }
+  // }, [ timeToExecute ])
 
   return timeToExecute
 }

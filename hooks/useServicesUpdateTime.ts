@@ -1,6 +1,8 @@
 import {
   useState,
-  useEffect
+  useEffect,
+  Dispatch,
+  SetStateAction
 } from 'react'
 
 import api from './../config/axios'
@@ -17,7 +19,12 @@ interface getServicesUpdateTimeInterface {
   data: Array<servicesUpdateTimeInterface>
 }
 
-export default function useServicesUpdateTime() {
+interface Params {
+  update?: boolean,
+  setUpdate?: Dispatch<SetStateAction<boolean>>
+}
+
+export default function useServicesUpdateTime({ update, setUpdate }: Params) {
   const [ updateTime, setUpdateTime ] = useState<Array<servicesUpdateTimeInterface>>([])
 
   async function getServicesUpdateTime() {
@@ -30,6 +37,10 @@ export default function useServicesUpdateTime() {
     })
       .then(response => {
         setUpdateTime(response.data.data)
+
+        if (!!setUpdate) {
+          setUpdate(false)
+        }
       })
       .catch(error => {
         console.log(error)
@@ -43,6 +54,12 @@ export default function useServicesUpdateTime() {
       getServicesUpdateTime()
     }
   }, [])
+
+  useEffect(() => {
+    if (update) {
+      getServicesUpdateTime()
+    }
+  }, [ update ])
 
   useEffect(() => {
     socket.on('routines_update_time', (servicesUpdateTime: Array<servicesUpdateTimeInterface>) => {

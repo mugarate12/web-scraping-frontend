@@ -53,10 +53,12 @@ const ViewsServices: NextPage = () => {
 
   const [ updateRowData, setUpdateRowData ] = useState<UpdateRowData | undefined>(undefined)
   const [ updateRows, setUpdateRows ] = useState<boolean>(false)
+
+  const [ updateServicesUpdateTime, setUpdateServicesUpdateTime ] = useState<boolean>(false)
   
   const services = useServices({ updateState: updateRows, setUpdateState: setUpdateRows })
   const servicesOperations = useServicesOperations(setUpdateRows)
-  const servicesUpdateTime = useServicesUpdateTime()
+  const servicesUpdateTime = useServicesUpdateTime({ update: updateServicesUpdateTime , setUpdate: setUpdateServicesUpdateTime })
   const timeToExecuteRoutine = useTimeToExecuteRoutine(servicesUpdateTime)
 
   const [ isUpdating, setIsUpdating ] = useState<Array<number>>([])
@@ -225,6 +227,7 @@ const ViewsServices: NextPage = () => {
           <Timer 
             time={time}
             updateTime={updateTime}
+            SetUpdate={setUpdateServicesUpdateTime}
           />
         )
       }
