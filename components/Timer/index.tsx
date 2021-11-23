@@ -33,7 +33,7 @@ export default function Timer({
   
       const duration = moment.duration(actualTime.diff(moreTime))
   
-      setTimer(`${duration.minutes()}:${duration.seconds()}`)
+      setTimer(`${(updateTime - 1) - duration.minutes()}:${60 - duration.seconds()}`)
     }
   }
 
@@ -48,15 +48,18 @@ export default function Timer({
   }
 
   async function verifyUpdate() {
-    if (updateTime === 1 && timer === '1:0') {
-      await requestUpdate()
-    } else if (updateTime === 3 && timer === '3:0') {
-      await requestUpdate()
-    } else if (updateTime === 5 && timer === '5:0') {
-      await requestUpdate()
-    } else if (updateTime === 10 && timer === '10:0') {
-      await requestUpdate()
-    } else if (updateTime === 15 && timer === '15:0') {
+    // if (updateTime === 1 && timer === '1:0') {
+    //   await requestUpdate()
+    // } else if (updateTime === 3 && timer === '3:0') {
+    //   await requestUpdate()
+    // } else if (updateTime === 5 && timer === '5:0') {
+    //   await requestUpdate()
+    // } else if (updateTime === 10 && timer === '10:0') {
+    //   await requestUpdate()
+    // } else if (updateTime === 15 && timer === '15:0') {
+    //   await requestUpdate()
+    // }
+    if (timer === '0:1') {
       await requestUpdate()
     }
   }
