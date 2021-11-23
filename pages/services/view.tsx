@@ -20,7 +20,8 @@ import {
 } from '@mui/x-data-grid'
 
 import {
-  EditServiceModal
+  EditServiceModal,
+  Timer
 } from './../../components'
 
 import {
@@ -210,7 +211,24 @@ const ViewsServices: NextPage = () => {
         )
       },
     },
-    { field: 'col5', headerName: 'Status de serviço', width: 150 },
+    { 
+      field: 'col5', 
+      headerName: 'Status de serviço', 
+      width: 150,
+      renderCell: (cellValues: any) => {
+        const row: any = cellValues['row']
+
+        const time = row['col5']
+        const updateTime = row['col2']
+
+        return (
+          <Timer 
+            time={time}
+            updateTime={updateTime}
+          />
+        )
+      }
+    },
     { 
       field: 'col6', 
       headerName: 'Ações', 

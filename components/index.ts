@@ -5,6 +5,7 @@ import EditUsersModal from "./EditUsersModal"
 import Graph from "./Graph"
 import Header from "./Header"
 import Menu from "./Menu"
+import Timer from './Timer'
 
 export {
   Alert,
@@ -13,5 +14,6 @@ export {
   EditUsersModal,
   Graph,
   Header,
-  Menu
+  Menu,
+  Timer
 }
