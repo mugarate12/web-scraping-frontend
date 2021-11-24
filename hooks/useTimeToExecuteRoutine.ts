@@ -47,7 +47,7 @@ export default function useTimeToExecuteRoutine(servicesUpdateTime: Array<servic
     const actualTime = moment()
     
     const times = servicesUpdateTime.map((serviceUpdateTime) => {
-      console.log(serviceUpdateTime.routine, serviceUpdateTime.last_execution)
+      // console.log(serviceUpdateTime.routine, serviceUpdateTime.last_execution)
 
       return {
         updateTime: serviceUpdateTime.routine,

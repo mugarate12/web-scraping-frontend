@@ -24,16 +24,43 @@ export default function Timer({
     return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
 
-  function updateTimer() {
+  function createTwoDigitsNumber(number: number) {
+    if (number < 10) {
+      return `0${number}`
+    } else {
+      return `${number}`
+    }
+  }
+
+  function formatDate(time: string) {
+    const actualTime = moment()
+    const moreTime = moment(time)
+
+    const duration = moment.duration(actualTime.diff(moreTime))
+    const minutes = ((updateTime - 1) - duration.minutes()) === 0 ? '00' : createTwoDigitsNumber((updateTime - 1) - duration.minutes())
+    const seconds = (60 - duration.seconds()) === 0 ? '00' : createTwoDigitsNumber(60 - duration.seconds())
+
+    return `00:${minutes}:${seconds}`
+  }
+
+  async function updateTimer() {
     if (time === 'Executando') {
       setTimer(time)
+    } else if (formatDate(time).includes('-')) {
+      setTimer('Executando')
+
+      await sleep(5000)
+
+      SetUpdate(true)
     } else {
-      const actualTime = moment()
-      const moreTime = moment(time)
+      // const actualTime = moment()
+      // const moreTime = moment(time)
   
-      const duration = moment.duration(actualTime.diff(moreTime))
+      // const duration = moment.duration(actualTime.diff(moreTime))
+      // const minutes = ((updateTime - 1) - duration.minutes()) === 0 ? '00' : createTwoDigitsNumber((updateTime - 1) - duration.minutes())
+      // const seconds = (60 - duration.seconds()) === 0 ? '00' : createTwoDigitsNumber(60 - duration.seconds())
   
-      setTimer(`${(updateTime - 1) - duration.minutes()}:${60 - duration.seconds()}`)
+      setTimer(formatDate(time))
     }
   }
 
@@ -41,25 +68,13 @@ export default function Timer({
     setLock(true)
     setTimer('Executando')
 
-    await sleep(30000)
+    await sleep(20000)
 
-    SetUpdate(true)
     setLock(false)
   }
 
   async function verifyUpdate() {
-    // if (updateTime === 1 && timer === '1:0') {
-    //   await requestUpdate()
-    // } else if (updateTime === 3 && timer === '3:0') {
-    //   await requestUpdate()
-    // } else if (updateTime === 5 && timer === '5:0') {
-    //   await requestUpdate()
-    // } else if (updateTime === 10 && timer === '10:0') {
-    //   await requestUpdate()
-    // } else if (updateTime === 15 && timer === '15:0') {
-    //   await requestUpdate()
-    // }
-    if (timer === '0:1') {
+    if (timer === '00:00:01') {
       await requestUpdate()
     }
   }
