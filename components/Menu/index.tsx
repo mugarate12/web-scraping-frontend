@@ -32,7 +32,6 @@ export default function Menu() {
   const [ openUsersOptions, setOpenUsersOptions ] = useState<boolean>(false)
   const [ openServicesOptions, setOpenServicesOptions ] = useState<boolean>(false)
   const [ openClientsOptions, setOpenClientsOptions ] = useState<boolean>(false)
-  const [ openNotificationsOptions, setOpenNotificationsOptions ] = useState<boolean>(false)
 
   const router = useRouter()
 
@@ -141,30 +140,6 @@ export default function Menu() {
       )
     }
   }
-  
-  function renderNotificationsOptions() {
-    if (openNotificationsOptions) {
-      return (
-        <>
-          <ListItem 
-            button 
-            onClick={(event) => toggleDrawer(event, '/notifications/create')}
-            onKeyDown={(event) => toggleDrawer(event, '/notifications/create')}
-          >
-            <ListItemText primary='Criar Notificações' sx={{ marginLeft: '20px' }}/>
-          </ListItem>
-          
-          {/* <ListItem 
-            button 
-            onClick={(event) => toggleDrawer(event, '/clients')}
-            onKeyDown={(event) => toggleDrawer(event, '/clients')}
-          >
-            <ListItemText primary='Ver Clientes' sx={{ marginLeft: '20px' }}/>
-          </ListItem> */}
-        </>
-      )
-    }
-  }
 
   function exitApp() {
     localStorage.removeItem('userToken')
@@ -250,22 +225,6 @@ export default function Menu() {
               </ListItem>
 
               {renderClientsOptions()}
-
-              <ListItem 
-                button
-                onClick={(event) => handleOption(event, () => setOpenNotificationsOptions(!openNotificationsOptions))}
-                onKeyDown={(event) => handleOption(event, () => setOpenNotificationsOptions(!openNotificationsOptions))}
-                >
-                <ListItemIcon>
-                  <Notifications />
-                </ListItemIcon>
-
-                <ListItemText primary='Notificações'/>
-
-                {renderArrow(openNotificationsOptions)}
-              </ListItem>
-
-              {renderNotificationsOptions()}
               
               <ListItem 
                 button
