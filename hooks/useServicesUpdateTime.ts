@@ -4,6 +4,7 @@ import {
   Dispatch,
   SetStateAction
 } from 'react'
+import moment from 'moment'
 
 import api from './../config/axios'
 import socket from './../config/socketIO'
@@ -36,6 +37,9 @@ export default function useServicesUpdateTime({ update, setUpdate }: Params) {
       }
     })
       .then(response => {
+        console.log(response.data.data)
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss'))
+
         setUpdateTime(response.data.data)
 
         if (!!setUpdate) {
