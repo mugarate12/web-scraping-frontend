@@ -38,6 +38,7 @@ export default function useServicesUpdateTime({ update, setUpdate }: Params) {
     })
       .then(response => {
         console.log(response.data.data)
+        console.log(moment(response.data.data[0].last_execution).format('YYYY-MM-DD HH:mm:ss'))
         console.log(moment().format('YYYY-MM-DD HH:mm:ss'))
 
         setUpdateTime(response.data.data)
