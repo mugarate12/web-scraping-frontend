@@ -49,7 +49,7 @@ export default function Timer({
     } else if (formatDate(time).includes('-')) {
       setTimer('Executando')
 
-      await sleep(5000)
+      await sleep(2000)
 
       SetUpdate(true)
     } else {
