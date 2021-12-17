@@ -6,6 +6,11 @@ import {
 
 import api from './../config/axios'
 
+interface updateUserPayload {
+  password?: string,
+  isAdmin?: boolean
+}
+
 export default function useUsersOperations() {
   const alertHook = useAlert()
 
@@ -42,17 +47,17 @@ export default function useUsersOperations() {
 
   }
 
-  async function updateUser(id: number, password: string) {
+  async function updateUser(id: number, payload: updateUserPayload) {
     const token = localStorage.getItem('userToken')
 
-    return api.put(`/users/${id}`, {
-      password
-      }, {
+    return api.put(`/users/${id}`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
       .then(() => {
+        alertHook.showAlert('usuário atualizado com sucesso!', 'success')
+
         return true
       })
       .catch(error => {
@@ -72,6 +77,8 @@ export default function useUsersOperations() {
       }
     })
       .then(() => {
+        alertHook.showAlert('usuário deletado com sucesso!', 'success')
+
         return true
       })
       .catch(error => {

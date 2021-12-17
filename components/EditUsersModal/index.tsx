@@ -7,6 +7,7 @@ import {
 import {
   Button,
   Box,
+  Checkbox,
   MenuItem,
   Select,
   IconButton,
@@ -49,13 +50,23 @@ export default function EditUsersModal({
 
   const [ password, setPassword ] = useState<string>('')
   const [ showPassword, setShowPassword ] = useState<boolean>(false)
+  const [ isAdmin, setIsAdmin ] = useState<boolean>(false)
 
   async function handleUpdate() {
-    const result = await usersOperations.updateUser(id, password)
+    let payload: {
+      password?: string,
+      isAdmin?: boolean
+    } = {}
+
+    if (!!password && password.length > 0) {
+      payload.password = password
+    }
+
+    payload.isAdmin = isAdmin
+
+    const result = await usersOperations.updateUser(id, payload)
 
     if (result) {
-      alert('serviço atualizado com sucesso!')
-
       setUpdateRows(true)
       setUpdateRowData(undefined)
     }
@@ -65,8 +76,6 @@ export default function EditUsersModal({
     const result = await usersOperations.removeUser(id)
 
     if (result) {
-      alert('serviço deletado com sucesso!')
-
       setUpdateRows(true)
       setUpdateRowData(undefined)
     }
@@ -116,6 +125,28 @@ export default function EditUsersModal({
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
+
+          <Box
+            component='div'
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <Checkbox
+              checked={isAdmin}
+              onChange={(event) => setIsAdmin(event.target.checked)}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+
+            <Typography
+              variant='subtitle2'
+              component='p'
+            >
+              Administrador
+            </Typography>
+          </Box>
         </Box>
 
         <div className={styles.actions_container}>
