@@ -9,9 +9,12 @@ import {
   Box,
   MenuItem,
   Select,
-  Typography,
-  TextField
+  Typography
 } from '@material-ui/core'
+
+import {
+  Modal
+} from './../../components'
 
 import {
   useServicesOperations
@@ -32,7 +35,8 @@ interface Props {
   updateTime: number,
   able: number,
   setUpdateRowData: Dispatch<SetStateAction<UpdateRowData | undefined>>,
-  setUpdateRows: Dispatch<SetStateAction<boolean>>
+  setUpdateRows: Dispatch<SetStateAction<boolean>>,
+  setShowModal: Dispatch<SetStateAction<boolean>>,
 }
 
 export default function EditServiceModal({
@@ -41,7 +45,8 @@ export default function EditServiceModal({
   updateTime,
   able,
   setUpdateRowData,
-  setUpdateRows
+  setUpdateRows,
+  setShowModal
 }: Props) {
   const servicesOperations = useServicesOperations()
 
@@ -71,42 +76,36 @@ export default function EditServiceModal({
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <Typography variant="h6" component="p">
-          {serviceName}
-        </Typography>
-
-        <Box
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            '& > :not(style)': { m: 1, width: '25ch' },
-          }}
-          noValidate
-          autoComplete="off"
+    <Modal
+      title={serviceName}
+      setShowModal={setShowModal}
+    >
+      <Box
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          '& > :not(style)': { m: 1, width: '25ch' },
+        }}
+        noValidate
+        autoComplete="off"
+      >
+        <Select
+          value={time}
+          onChange={(event) => setTime(Number(event.target.value))}
         >
-          <Select
-            value={time}
-            onChange={(event) => setTime(Number(event.target.value))}
-          >
-            <MenuItem value={1}>1 minuto</MenuItem>
-            <MenuItem value={3}>3 minutos</MenuItem>
-            <MenuItem value={5}>5 minutos</MenuItem>
-            <MenuItem value={10}>10 minutos</MenuItem>
-            <MenuItem value={15}>15 minutos</MenuItem>
-          </Select>
-        </Box>
+          <MenuItem value={1}>1 minuto</MenuItem>
+          <MenuItem value={3}>3 minutos</MenuItem>
+          <MenuItem value={5}>5 minutos</MenuItem>
+          <MenuItem value={10}>10 minutos</MenuItem>
+          <MenuItem value={15}>15 minutos</MenuItem>
+        </Select>
+      </Box>
 
-        <div className={styles.actions_container}>
-          <Button variant="text" onClick={() => setUpdateRowData(undefined)}>Cancelar</Button>
-
-          <Button variant="contained" color="error" onClick={() => handleDelete()}>Remover</Button>
-          <Button variant="contained" color="success" onClick={() => handleUpdateTime()}>Editar</Button>
-        </div>
-
+      <div className={styles.actions_container}>
+        <Button variant="contained" color="error" onClick={() => handleDelete()}>Remover</Button>
+        <Button variant="contained" color="success" onClick={() => handleUpdateTime()}>Editar</Button>
       </div>
-    </div>
+    </Modal>
   )
 }

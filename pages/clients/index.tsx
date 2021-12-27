@@ -8,12 +8,8 @@ import moment from 'moment'
 import 'moment/locale/pt-br'
 
 import {
-  Box,
   Button,
-  CircularProgress,
-  IconButton,
-  Paper,
-  Link
+  IconButton
 } from '@material-ui/core'
 
 import { 
@@ -26,16 +22,12 @@ import {
 
 import {
   EditClientModal
-} from './../../components'
+} from './../../containers'
 
 import {
   useAlert,
   usePublicAccessClients,
-  usePublicAccessClientsOperations,
-  useServices,
-  useServicesOperations,
-  useServicesUpdateTime,
-  useTimeToExecuteRoutine
+  usePublicAccessClientsOperations
 } from './../../hooks'
 
 import { Service } from './../../interfaces/services'
@@ -123,7 +115,7 @@ const ViewClients: NextPage = () => {
           clientID={clientIDToUpdate}
           name={nameOfClientToUpdate}
           setUpdateRows={setUpdateRows}
-          setShowUpdateClientModal={setShowUpdateClientModal}
+          setShowModal={setShowUpdateClientModal}
         />
       )
     }

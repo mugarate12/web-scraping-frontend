@@ -20,9 +20,12 @@ import {
 } from '@mui/x-data-grid'
 
 import {
-  EditServiceModal,
   Timer
 } from './../../components'
+
+import {
+  EditServiceModal
+} from './../../containers'
 
 import {
   useAlert,
@@ -53,6 +56,7 @@ const ViewsServices: NextPage = () => {
 
   const [ updateRowData, setUpdateRowData ] = useState<UpdateRowData | undefined>(undefined)
   const [ updateRows, setUpdateRows ] = useState<boolean>(false)
+  const [ showUpdateModal, setShowUpdateModal ] = useState<boolean>(false)
 
   const [ updateServicesUpdateTime, setUpdateServicesUpdateTime ] = useState<boolean>(false)
   
@@ -129,6 +133,8 @@ const ViewsServices: NextPage = () => {
       updateTime,
       able
     })
+    
+    setShowUpdateModal(true)
   }
 
   function setUpdatingSingleService(id: number) {
@@ -270,7 +276,7 @@ const ViewsServices: NextPage = () => {
   ]
 
   function renderEditServiceModal() {
-    if (updateRowData !== undefined) {
+    if (updateRowData !== undefined && showUpdateModal) {
       return (
         <EditServiceModal 
           id={updateRowData.id}
@@ -279,6 +285,7 @@ const ViewsServices: NextPage = () => {
           able={updateRowData.able}
           setUpdateRowData={setUpdateRowData}
           setUpdateRows={setUpdateRows}
+          setShowModal={setShowUpdateModal}
         />
       )
     }

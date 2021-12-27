@@ -22,6 +22,8 @@ export default function useAuth() {
 
   async function login(login: string, password: string) {
     if (!!login && !!password && login.length > 0 && password.length > 0) {
+      console.log('session');
+
       await api.post<SessionResponse>('/session', {
         login,
         password

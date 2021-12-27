@@ -16,7 +16,7 @@ import {
 
 import {
   EditUsersModal
-} from './../../components'
+} from './../../containers'
 
 import {
   useUsers
@@ -32,6 +32,7 @@ interface UpdateRowData {
 const ViewUsers: NextPage = () => {
   const [ updateRowData, setUpdateRowData ] = useState<UpdateRowData | undefined>(undefined)
   const [ updateRows, setUpdateRows ] = useState<boolean>(false)
+  const [ showUpdateModal, setShowUpdateModal ] = useState<boolean>(false)
 
   const users = useUsers({ updateUsersState: updateRows, setUpdateUsersState: setUpdateRows })
   
@@ -54,6 +55,7 @@ const ViewUsers: NextPage = () => {
       id,
       login
     })
+    setShowUpdateModal(true)
   }
 
   const rows = normalizeData()
@@ -64,13 +66,14 @@ const ViewUsers: NextPage = () => {
   ]
 
   function renderEditUsersModal() {
-    if (updateRowData !== undefined) {
+    if (updateRowData !== undefined && showUpdateModal) {
       return (
         <EditUsersModal 
           id={updateRowData.id}
           login={updateRowData.login}
           setUpdateRowData={setUpdateRowData}
           setUpdateRows={setUpdateRows}
+          setShowModal={setShowUpdateModal}
         />
       )
     }

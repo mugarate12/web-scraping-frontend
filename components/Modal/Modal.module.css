@@ -23,9 +23,25 @@
 
   padding: 10px 20px;
 
+  display: flex;
+  flex-direction: column;
+
   background-color: #FFF;
 
   border-radius: 4px;
 
   box-shadow: 0px 8px 18px rgba(93, 92, 204, 0.1);
+}
+
+.line {
+  height: 1px;
+  width: 90%;
+
+  margin-bottom: 5px;
+
+  align-self: center;
+
+  background-color: #e6e3e3;
+
+  border-radius: 5px;
 }
