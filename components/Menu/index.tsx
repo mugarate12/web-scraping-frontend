@@ -16,6 +16,7 @@ import {
 import {
   ArrowUpward,
   ArrowDownward,
+  BrightnessHigh,
   Description,
   ExitToApp,
   VpnKey,
@@ -32,6 +33,7 @@ export default function Menu() {
   const [ openUsersOptions, setOpenUsersOptions ] = useState<boolean>(false)
   const [ openServicesOptions, setOpenServicesOptions ] = useState<boolean>(false)
   const [ openClientsOptions, setOpenClientsOptions ] = useState<boolean>(false)
+  const [ openEnergyOptions, setOpenEnergyOptions ] = useState<boolean>(false)
 
   const router = useRouter()
 
@@ -140,6 +142,30 @@ export default function Menu() {
       )
     }
   }
+  
+  function renderEnergyOptions() {
+    if (openEnergyOptions) {
+      return (
+        <>
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/energy/create')}
+            onKeyDown={(event) => toggleDrawer(event, '/energy/create')}
+          >
+            <ListItemText primary='Criar monitoramento' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
+          
+          {/* <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/clients')}
+            onKeyDown={(event) => toggleDrawer(event, '/clients')}
+          >
+            <ListItemText primary='Ver Clientes' sx={{ marginLeft: '20px' }}/>
+          </ListItem> */}
+        </>
+      )
+    }
+  }
 
   function exitApp() {
     localStorage.removeItem('userToken')
@@ -225,6 +251,22 @@ export default function Menu() {
               </ListItem>
 
               {renderClientsOptions()}
+
+              <ListItem 
+                button
+                onClick={(event) => handleOption(event, () => setOpenEnergyOptions(!openEnergyOptions))}
+                onKeyDown={(event) => handleOption(event, () => setOpenEnergyOptions(!openEnergyOptions))}
+                >
+                <ListItemIcon>
+                  <BrightnessHigh />
+                </ListItemIcon>
+
+                <ListItemText primary='Energia'/>
+
+                {renderArrow(openEnergyOptions)}
+              </ListItem>
+
+              {renderEnergyOptions()}
               
               <ListItem 
                 button
