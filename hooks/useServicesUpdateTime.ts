@@ -6,7 +6,7 @@ import {
 } from 'react'
 import moment from 'moment'
 
-import api from './../config/axios'
+import { apiDetector } from './../config'
 import socket from './../config/socketIO'
 
 interface servicesUpdateTimeInterface {
@@ -31,7 +31,7 @@ export default function useServicesUpdateTime({ update, setUpdate }: Params) {
   async function getServicesUpdateTime() {
     const token = localStorage.getItem('userToken')
 
-    await api.get<getServicesUpdateTimeInterface>('/services/updateTime', {
+    await apiDetector.get<getServicesUpdateTimeInterface>('/services/updateTime', {
       headers: {
         'Authorization': `Bearer ${token}`
       }

@@ -6,7 +6,7 @@ import {
 } from 'react'
 
 import socket from './../config/socketIO'
-import api from './../config/axios'
+import { apiDetector } from './../config'
 
 import { Service } from './../interfaces/services'
 
@@ -29,7 +29,7 @@ export default function useServices({
   async function getServices() {
     const token = localStorage.getItem('userToken')
 
-    await api.get<GetServicesResponseInterface>('/services', {
+    await apiDetector.get<GetServicesResponseInterface>('/services', {
       headers: {
         'Authorization': `Bearer ${token}`
       }

@@ -9,7 +9,7 @@ import {
   useAlert
 } from './'
 
-import api from './../config/axios'
+import { apiDetector } from './../config'
 
 import { clientInformationData } from './../interfaces/publicAccessClients'
 
@@ -33,7 +33,7 @@ export default function usePublicAccessClients({
   async function getClients() {
     const token = localStorage.getItem('userToken')
 
-    await api.get<getClientsInterface>('/public', {
+    await apiDetector.get<getClientsInterface>('/public', {
       headers: {
         'Authorization': `Bearer ${token}`
       }

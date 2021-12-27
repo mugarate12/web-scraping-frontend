@@ -6,7 +6,7 @@ import {
   useAlert
 } from './'
 
-import api from './../config/axios'
+import { apiDetector } from './../config'
 
 interface SessionResponse {
   token: string,
@@ -24,7 +24,7 @@ export default function useAuth() {
     if (!!login && !!password && login.length > 0 && password.length > 0) {
       console.log('session');
 
-      await api.post<SessionResponse>('/session', {
+      await apiDetector.post<SessionResponse>('/session', {
         login,
         password
       })

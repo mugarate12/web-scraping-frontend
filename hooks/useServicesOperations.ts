@@ -7,7 +7,7 @@ import {
   useAlert
 } from './'
 
-import api from './../config/axios'
+import { apiDetector } from './../config'
 
 interface createServiceResponse {
   message: string
@@ -26,7 +26,7 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
     const token = localStorage.getItem('userToken')
     
     if (!!serviceName && serviceName.length > 0 && !!time) {
-      await api.post('/services', {
+      await apiDetector.post('/services', {
         serviceName,
         updateTime: time
       }, {
@@ -57,7 +57,7 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   async function updateService(id: number, time: number) {
     const token = localStorage.getItem('userToken')
 
-    return await api.put(`/services/${id}`, {
+    return await apiDetector.put(`/services/${id}`, {
       updateTime: time
     }, {
       headers: {
@@ -85,7 +85,7 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   async function updateServiceAble(id: number, able: number) {
     const token = localStorage.getItem('userToken')
     
-    return await api.put(`/services/${id}`, {
+    return await apiDetector.put(`/services/${id}`, {
       able: able
     }, {
       headers: {
@@ -114,7 +114,7 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   async function updateServiceInformations(serviceName: string) {
     const token = localStorage.getItem('userToken')
     
-    return await api.get(`/service/${serviceName}`, {
+    return await apiDetector.get(`/service/${serviceName}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -140,7 +140,7 @@ export default function useServicesOperations(updateServices?: Dispatch<SetState
   async function removeService(id: number) {
     const token = localStorage.getItem('userToken')
     
-    return await api.delete(`/services/${id}`, {
+    return await apiDetector.delete(`/services/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

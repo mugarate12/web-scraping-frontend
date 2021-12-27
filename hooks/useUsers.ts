@@ -7,7 +7,7 @@ import {
 
 import { useAuthUserContext } from './../context/authUserContext'
 
-import api from './../config/axios'
+import { apiDetector } from './../config'
 
 interface User {
   id: number,
@@ -30,7 +30,7 @@ export default function useUsers({ updateUsersState, setUpdateUsersState }: Para
   const [ users, setUsers ] = useState<Array<User>>([])
 
   async function getUsers() {
-    await api.get<getUsersResponse>('/users', {
+    await apiDetector.get<getUsersResponse>('/users', {
       headers: {
         'Authentication': `Bearer ${token}`
       }

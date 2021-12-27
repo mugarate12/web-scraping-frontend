@@ -4,7 +4,7 @@ import {
   useAlert
 } from './'
 
-import api from './../config/axios'
+import { apiDetector } from './../config'
 
 interface updateUserPayload {
   password?: string,
@@ -18,7 +18,7 @@ export default function useUsersOperations() {
     const token = localStorage.getItem('userToken')
     
     if (!!login && !!password) {
-      return api.post('/users', {
+      return apiDetector.post('/users', {
         login,
         password,
         isAdmin
@@ -50,7 +50,7 @@ export default function useUsersOperations() {
   async function updateUser(id: number, payload: updateUserPayload) {
     const token = localStorage.getItem('userToken')
 
-    return api.put(`/users/${id}`, payload, {
+    return apiDetector.put(`/users/${id}`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -71,7 +71,7 @@ export default function useUsersOperations() {
   async function removeUser(id: number) {
     const token = localStorage.getItem('userToken')
     
-    return api.delete(`/users/${id}`, {
+    return apiDetector.delete(`/users/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

@@ -10,7 +10,7 @@ import {
 } from './'
 
 
-import api from './../config/axios'
+import { apiDetector } from './../config'
 
 interface updatePayloadInterface {
   identifier?: string,
@@ -35,7 +35,7 @@ export default function usePublicAccessClientsOperations({
   async function create(identifier: string) {
     const token = localStorage.getItem('userToken')
 
-    return await api.post('/public/create', {
+    return await apiDetector.post('/public/create', {
       identifier
     }, {
       headers: {
@@ -68,7 +68,7 @@ export default function usePublicAccessClientsOperations({
       updatePayload.identifier = identifier
     }
 
-    return await api.put(`/public/update/${clientID}`, updatePayload, {
+    return await apiDetector.put(`/public/update/${clientID}`, updatePayload, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -90,7 +90,7 @@ export default function usePublicAccessClientsOperations({
   async function remove(identifier: string) {
     const token = localStorage.getItem('userToken')
 
-    return await api.delete(`/public/${identifier}`, {
+    return await apiDetector.delete(`/public/${identifier}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
