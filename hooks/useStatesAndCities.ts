@@ -60,7 +60,7 @@ export default function useStatesAndCities({ state, city }: ParamsInterface) {
   }
   
   async function getCities() {
-    await apiEnergy.get<CitiesResponse>('/service/cpfl/states/sp/cities')
+    await apiEnergy.get<CitiesResponse>(`/service/cpfl/states/${state}/cities`)
       .then(response => {
         setCities(response.data.data)
       })
