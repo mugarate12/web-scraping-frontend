@@ -136,7 +136,7 @@ const CreateEnergy: NextPage = () => {
                 sx={{
                   width: 200
                 }}
-                renderInput={(params) => <TextField {...params} label="Estados" />}
+                renderInput={(params) => <TextField {...params} label="Opções" />}
                 disabled={!!statesAndCities.states && statesAndCities.states.length > 0 ? false : true}
               />
               
