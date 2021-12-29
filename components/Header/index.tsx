@@ -44,13 +44,13 @@ export default function Header() {
 
   function renderTitle() {
     if (router.pathname.includes('services')) {
-      return 'Serviços'
+      return 'Flow4Detector'
     } else if (router.pathname.includes('users')) {
       return 'Usuários'
     } else if (router.pathname.includes('clients')) {
       return 'Clientes'
     } else if (router.pathname.includes('energy')) {
-      return 'Energia'
+      return 'Flow4Energy'
     }
   }
 

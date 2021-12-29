@@ -45,6 +45,8 @@ export default function Menu() {
     setOpen(false)
     setOpenUsersOptions(false)
     setOpenServicesOptions(false)
+    setOpenClientsOptions(false)
+    setOpenEnergyOptions(false)
 
     if (!!pagePath) {
       router.push(pagePath)
@@ -229,7 +231,7 @@ export default function Menu() {
                   <PersonalVideo />
                 </ListItemIcon>
 
-                <ListItemText primary='Serviços'/>
+                <ListItemText primary='Flow4Detector'/>
 
                 {renderArrow(openServicesOptions)}
               </ListItem>
@@ -261,7 +263,7 @@ export default function Menu() {
                   <BrightnessHigh />
                 </ListItemIcon>
 
-                <ListItemText primary='Energia'/>
+                <ListItemText primary='Flow4Energy'/>
 
                 {renderArrow(openEnergyOptions)}
               </ListItem>
