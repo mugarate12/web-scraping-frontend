@@ -1,5 +1,6 @@
 import useAlert from "./useAlert"
 import useAuth from "./useAuth"
+import useDealershipsAndUpdateTimes from "./useDealershipsAndUpdateTimes"
 import useEnergyOperations from "./useEnergyOperations"
 import useOptions from "./useOptions"
 import usePublicAccessClients from "./usePublicAccessClients"
@@ -16,6 +17,7 @@ import useUsersOperations from "./useUsersOperations"
 export {
   useAlert,
   useAuth,
+  useDealershipsAndUpdateTimes,
   useEnergyOperations,
   useOptions,
   usePublicAccessClients,

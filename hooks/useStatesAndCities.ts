@@ -30,11 +30,12 @@ interface CitiesResponse {
 }
 
 interface ParamsInterface {
+  dealership: string,
   state: string,
   city: string
 }
 
-export default function useStatesAndCities({ state, city }: ParamsInterface) {
+export default function useStatesAndCities({ dealership, state, city }: ParamsInterface) {
   const alertHook = useAlert()
   
   const [ states, setStates ] = useState<Array<StatesInterface>>([])
@@ -50,7 +51,7 @@ export default function useStatesAndCities({ state, city }: ParamsInterface) {
   }
 
   async function getStates() {
-    await apiEnergy.get<StatesResponse>('/service/cpfl/states')
+    await apiEnergy.get<StatesResponse>(`/service/cpfl/states/${dealership}`)
       .then(response => {
         setStates(formatStatesResponse(response.data.data))
       })
@@ -60,7 +61,7 @@ export default function useStatesAndCities({ state, city }: ParamsInterface) {
   }
   
   async function getCities() {
-    await apiEnergy.get<CitiesResponse>(`/service/cpfl/states/${state}/cities`)
+    await apiEnergy.get<CitiesResponse>(`/service/cpfl/states/${dealership}/${state}/cities`)
       .then(response => {
         setCities(response.data.data)
       })
@@ -70,8 +71,10 @@ export default function useStatesAndCities({ state, city }: ParamsInterface) {
   }
 
   useEffect(() => {
-    getStates()
-  }, [])
+    if (!!dealership) {
+      getStates()
+    }
+  }, [ dealership ])
   
   useEffect(() => {
     if (!!state) {

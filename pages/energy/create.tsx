@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core'
 
 import {
+  useDealershipsAndUpdateTimes,
   useOptions,
   useServicesOperations,
   useEnergyOperations,
@@ -26,10 +27,13 @@ import {
 import styles from './../../styles/Energy.module.css'
 
 const CreateEnergy: NextPage = () => {
+  const [ dealership, setDealership ] = useState<string>('')
   const [ state, setState ] = useState<string>('')
   const [ city, setCity ] = useState<string>('')
+  const [ updateTime, setUpdateTime ] = useState<number>()
 
-  const statesAndCities = useStatesAndCities({ state, city })
+  const statesAndCities = useStatesAndCities({ dealership, state, city })
+  const dealershipsAndUpdateTimes = useDealershipsAndUpdateTimes()
   const energyOperations = useEnergyOperations()
   
   function formatOptions(payload: Array<{ value: string, label: string}>) {
@@ -62,7 +66,6 @@ const CreateEnergy: NextPage = () => {
 
     return formatted
   }
-
 
   return (
     <>
@@ -108,6 +111,22 @@ const CreateEnergy: NextPage = () => {
                 // value={autoCompleteValue}
                 onChange={(event, newValue) => {
                   if (!!newValue) {
+                    setDealership(newValue.value)
+                  }
+                }}
+                options={formatOptions(dealershipsAndUpdateTimes.dealerships).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                groupBy={(option) => option.firstLetter}
+                getOptionLabel={(option) => option.option}
+                sx={{
+                  width: 200
+                }}
+                renderInput={(params) => <TextField {...params} label="Concessionárias" />}
+              />
+
+              <Autocomplete
+                // value={autoCompleteValue}
+                onChange={(event, newValue) => {
+                  if (!!newValue) {
                     setState(newValue.value)
                   }
                 }}
@@ -118,6 +137,7 @@ const CreateEnergy: NextPage = () => {
                   width: 200
                 }}
                 renderInput={(params) => <TextField {...params} label="Estados" />}
+                disabled={!!statesAndCities.states && statesAndCities.states.length > 0 ? false : true}
               />
               
               <Autocomplete
@@ -135,6 +155,22 @@ const CreateEnergy: NextPage = () => {
                 }}
                 renderInput={(params) => <TextField {...params} label="Cidades" />}
                 disabled={!!statesAndCities.cities && statesAndCities.cities.length > 0 ? false : true}
+              />
+
+              <Autocomplete
+                // value={autoCompleteValue}
+                onChange={(event, newValue) => {
+                  if (!!newValue) {
+                    setUpdateTime(Number(newValue.value))
+                  }
+                }}
+                options={formatOptions(dealershipsAndUpdateTimes.updatesTimes).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                // groupBy={(option) => option.firstLetter}
+                // getOptionLabel={(option) => option.option}
+                sx={{
+                  width: 200
+                }}
+                renderInput={(params) => <TextField {...params} label="Tempo de atualizaçao" />}
               />
             </Box>
           </Paper>
@@ -156,7 +192,7 @@ const CreateEnergy: NextPage = () => {
               borderTopLeftRadius: '0px',
               borderTopRightRadius: '0px'
             }}
-            onClick={() => energyOperations.create({ state, city })}
+            onClick={() => energyOperations.create({ dealership, state, city, update_time: Number(updateTime) })}
           >monitorar</Button>
         </Box>
       </main>
