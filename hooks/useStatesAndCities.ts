@@ -21,7 +21,7 @@ interface CitiesInterface {
 
 interface StatesResponse {
   message: string,
-  data: Array<string>
+  data: Array<StatesInterface>
 }
 
 interface CitiesResponse {
@@ -41,19 +41,10 @@ export default function useStatesAndCities({ dealership, state, city }: ParamsIn
   const [ states, setStates ] = useState<Array<StatesInterface>>([])
   const [ cities, setCities ] = useState<Array<CitiesInterface>>([])
 
-  function formatStatesResponse(states: Array<string>) {
-    return states.map((state) => {
-      return {
-        label: state,
-        value: state
-      }
-    })
-  }
-
   async function getStates() {
     await apiEnergy.get<StatesResponse>(`/service/cpfl/states/${dealership}`)
       .then(response => {
-        setStates(formatStatesResponse(response.data.data))
+        setStates(response.data.data)
       })
       .catch(error => {
 

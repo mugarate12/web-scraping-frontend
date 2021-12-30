@@ -51,6 +51,21 @@ const CreateEnergy: NextPage = () => {
     return formatted
   }
   
+  function formatOptionsToStates(payload: Array<{ value: string, label: string}>) {
+    const formatted = payload.map(stateValue => {
+      const firstLetter = stateValue.label[0].toUpperCase()
+      const option = stateValue.label.toUpperCase()
+
+      return {
+        ...stateValue,
+        firstLetter,
+        option
+      }
+    })
+
+    return formatted
+  }
+  
   function formatOptionsToCities(payload: Array<{ value: string, label: string}>) {
     const formatted = payload.map(stateValue => {
       const firstLetter = stateValue.label[0].toUpperCase()
@@ -130,7 +145,7 @@ const CreateEnergy: NextPage = () => {
                     setState(newValue.value)
                   }
                 }}
-                options={formatOptions(statesAndCities.states).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                options={formatOptionsToStates(statesAndCities.states).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
                 groupBy={(option) => option.firstLetter}
                 getOptionLabel={(option) => option.option}
                 sx={{
