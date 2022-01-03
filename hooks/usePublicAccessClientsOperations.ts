@@ -1,3 +1,4 @@
+import { Functions } from '@material-ui/icons'
 import {
   useState,
   useEffect,
@@ -14,7 +15,13 @@ import { apiDetector } from './../config'
 
 interface updatePayloadInterface {
   identifier?: string,
-  able?: number
+  able?: number,
+  flow4Energy?: boolean,
+  flow4Detector?: boolean
+}
+
+interface getPermissionsInterface {
+  data: Array<string>
 }
 
 interface Params {
@@ -32,11 +39,13 @@ export default function usePublicAccessClientsOperations({
     }
   }
 
-  async function create(identifier: string) {
+  async function create(identifier: string, flow4Detector: boolean, flow4Energy: boolean) {
     const token = localStorage.getItem('userToken')
 
     return await apiDetector.post('/public/create', {
-      identifier
+      identifier,
+      flow4Energy: flow4Energy,
+      flow4Detector: flow4Detector
     }, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -56,7 +65,26 @@ export default function usePublicAccessClientsOperations({
       })
   }
 
-  async function update(clientID: number, { able, identifier }: updatePayloadInterface) {
+  async function getPermissions(clientID: number) {
+    const token = localStorage.getItem('userToken')
+    let permissions: Array<string> = []
+
+    await apiDetector.get<getPermissionsInterface>(`/public/client/permissions/${clientID}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then((response) => {
+        permissions = response.data.data
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+
+    return permissions
+  }
+
+  async function update(clientID: number, { able, identifier, flow4Energy, flow4Detector }: updatePayloadInterface) {
     const token = localStorage.getItem('userToken')
     let updatePayload: updatePayloadInterface = {}
 
@@ -66,6 +94,14 @@ export default function usePublicAccessClientsOperations({
 
     if (!!identifier) {
       updatePayload.identifier = identifier
+    }
+    
+    if (!!flow4Detector) {
+      updatePayload.flow4Detector = flow4Detector
+    }
+    
+    if (!!flow4Energy) {
+      updatePayload.flow4Energy = flow4Energy
     }
 
     return await apiDetector.put(`/public/update/${clientID}`, updatePayload, {
@@ -112,6 +148,7 @@ export default function usePublicAccessClientsOperations({
   return {
     create,
     update,
-    remove
+    remove,
+    getPermissions
   }
 }

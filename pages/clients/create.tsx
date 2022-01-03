@@ -9,11 +9,13 @@ import {
   Autocomplete,
   Button,
   Box,
+  Checkbox,
   Paper,
   InputAdornment,
   Select,
   MenuItem,
-  TextField
+  TextField,
+  Typography
 } from '@material-ui/core'
 
 import {
@@ -40,10 +42,13 @@ const CreateClient: NextPage = () => {
   const publicAccessClientsOperations = usePublicAccessClientsOperations({})
 
   const [ identifier, setIdentifier ] = useState<string>('')
+  
+  const [ flow4Detector, setFlow4Detector ] = useState<boolean>(false)
+  const [ flow4Energy, setFlow4Energy ] = useState<boolean>(false)
 
   async function createClient() {
     if (identifier.length > 0) {
-      const result = await publicAccessClientsOperations.create(identifier)
+      const result = await publicAccessClientsOperations.create(identifier, flow4Detector, flow4Energy)
 
       if (result) {
         alertOperation.showAlert('cliente criado com sucesso!', 'success')
@@ -103,6 +108,50 @@ const CreateClient: NextPage = () => {
                 value={identifier}
                 onChange={(event) => setIdentifier(event.target.value)}
               />
+
+              <Box
+                component='div'
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center'
+                }}
+              >
+                <Checkbox
+                  checked={flow4Detector}
+                  onChange={(event) => setFlow4Detector(event.target.checked)}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+
+                <Typography
+                  variant='subtitle2'
+                  component='p'
+                >
+                  flow4Detector
+                </Typography>
+              </Box>
+              
+              <Box
+                component='div'
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center'
+                }}
+              >
+                <Checkbox
+                  checked={flow4Energy}
+                  onChange={(event) => setFlow4Energy(event.target.checked)}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+
+                <Typography
+                  variant='subtitle2'
+                  component='p'
+                >
+                  flow4Energy
+                </Typography>
+              </Box>
             </Box>
           </Paper>
 

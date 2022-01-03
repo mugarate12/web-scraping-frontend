@@ -1,12 +1,14 @@
 import { 
   useState,
   Dispatch,
-  SetStateAction
+  SetStateAction,
+  useEffect
 } from 'react'
 
 import {
   Button,
   Box,
+  Checkbox,
   InputAdornment,
   Typography,
   TextField
@@ -44,9 +46,13 @@ export default function EditClientModal({
   const publicAccessClientsOperations = usePublicAccessClientsOperations({ setUpdateState: setUpdateRows })
 
   const [ identifier, setIdentifier ] = useState<string>(name)
+  const [ permissions, setPermissions ] = useState<Array<string>>([])
+
+  const [ flow4Detector, setFlow4Detector ] = useState<boolean>(false)
+  const [ flow4Energy, setFlow4Energy ] = useState<boolean>(false)
 
   async function updateClient() {
-    const result = await publicAccessClientsOperations.update(clientID, { identifier })
+    const result = await publicAccessClientsOperations.update(clientID, { identifier, flow4Energy, flow4Detector })
 
     if (result) {
       alertHook.showAlert('cliente atualizado com sucesso', 'success')
@@ -54,6 +60,31 @@ export default function EditClientModal({
       setShowModal(false)
     }
   }
+
+  async function getPermissions() {
+    await publicAccessClientsOperations.getPermissions(clientID)
+      .then((permissions) => {
+        setPermissions(permissions)
+      })
+  }
+
+  useEffect(() => {
+    if (!!clientID) {
+      getPermissions()
+    }
+  }, [ clientID ])
+
+  useEffect(() => {
+    console.log('permissoes', permissions);
+    if (permissions.includes('ACCESS_API_FLOW4ENERGY_DATA')) {
+      console.log('object');
+      setFlow4Energy(true)
+    }
+
+    if (permissions.includes('ACCESS_API_FLOW4DETECTOR_DATA')) {
+      setFlow4Detector(true)
+    }
+  }, [ permissions ])
 
   return (
     <Modal
@@ -83,6 +114,50 @@ export default function EditClientModal({
           value={identifier}
           onChange={(event) => setIdentifier(event.target.value)}
         />
+
+        <Box
+          component='div'
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}
+        >
+          <Checkbox
+            checked={flow4Detector}
+            onChange={(event) => setFlow4Detector(event.target.checked)}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+
+          <Typography
+            variant='subtitle2'
+            component='p'
+          >
+            flow4Detector
+          </Typography>
+        </Box>
+        
+        <Box
+          component='div'
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}
+        >
+          <Checkbox
+            checked={flow4Energy}
+            onChange={(event) => setFlow4Energy(event.target.checked)}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+
+          <Typography
+            variant='subtitle2'
+            component='p'
+          >
+            flow4Energy
+          </Typography>
+        </Box>
       </Box>
 
       <div className={styles.actions_container}>
