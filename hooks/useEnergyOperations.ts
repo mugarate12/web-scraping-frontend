@@ -22,11 +22,13 @@ interface createMonitoringInterface {
 
 interface updateServiceInterface {
   id: number,
-  able?: number
+  able?: number,
+  updateTime?: number
 }
 
 interface updateServicePayloadInterface {
-  able?: number
+  able?: number,
+  updateTime?: number
 }
 
 interface Params {
@@ -56,15 +58,17 @@ export default function useEnergyOperations({ setUpdate }: Params) {
     }
   }
 
-  async function update({ id, able }: updateServiceInterface) {
+  async function update({ id, able, updateTime }: updateServiceInterface) {
     const token = localStorage.getItem('userToken')
     let payload: updateServicePayloadInterface = {}
 
     if (!!able) {
       payload.able = able
     }
-
-    console.log(payload)
+    
+    if (!!updateTime) {
+      payload.updateTime = updateTime
+    }
 
     return await apiEnergy.put(`/service/cpfl/${id}`, payload, {
       headers: {
@@ -88,9 +92,44 @@ export default function useEnergyOperations({ setUpdate }: Params) {
         return false
       })
   }
+
+  async function updateManually(state: string, city: string) {
+    await apiEnergy.get(`/cpfl/singleUpdate/${state}/${city}`)
+      .then(() => {
+        alertHook.showAlert('serviço atualizado com sucesso!', 'success')
+      })
+      .catch(error => {
+        console.log(error)
+
+        alertHook.showAlert('erro ao atualizar serviço, tente novamente', 'error')
+      })
+  }
+
+  async function remove(id: number) {
+    const token = localStorage.getItem('userToken')
+    let result =  false
+
+    await apiEnergy.delete(`/service/cpfl/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(() => {
+        alertHook.showAlert('serviço deletado com sucesso!', 'success')
+
+        result = true
+      })
+      .catch(() => {
+        alertHook.showAlert('erro ao deletar serviço, tente novamente', 'error')
+      })
+
+    return result
+  }
   
   return {
     create,
-    update
+    update,
+    updateManually,
+    remove
   }  
 }

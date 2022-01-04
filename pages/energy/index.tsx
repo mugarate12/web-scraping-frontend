@@ -9,6 +9,10 @@ import {
 } from './../../components'
 
 import {
+  EditEnergyModal
+} from './../../containers'
+
+import {
   Box,
   Button,
   CircularProgress,
@@ -28,13 +32,24 @@ import {
 
 import styles from './../../styles/ViewEnergyServices.module.css'
 
+interface EnergyUpdate {
+  id: number,
+  title: string,
+  updateTime: number
+}
+
 const ViewEnergyPage: NextPage = () => {
   const [ updateServices, setUpdateServices ] = useState<boolean>(false)
   const [ updateServicesUpdateTime, setUpdateServicesUpdateTime ] = useState<boolean>(false)
+  const [ showUpdateModal, setShowUpdateModal ] = useState<boolean>(false)
+
+  const [ serviceToUpdate, setServiceToUpdate ] = useState<EnergyUpdate>()
   
   const services = useEnergy({ update: updateServices, setUpdate: setUpdateServices })
   const servicesUpdateTime = useEnergyUpdateTime({ update: updateServicesUpdateTime, setUpdate: setUpdateServicesUpdateTime })
   const energyOperations = useEnergyOperations({ setUpdate: setUpdateServices })
+
+  const [ isUpdating, setIsUpdating ] = useState<Array<number>>([])
 
   function getServiceTime(id: number) {
     let time = ''
@@ -85,6 +100,57 @@ const ViewEnergyPage: NextPage = () => {
     }
   }
 
+  function renderUpdateServiceInformationButtonContent(id: number) {
+    const isUpdatingById = isUpdating.includes(id)
+
+    if (isUpdatingById) {
+      return (
+        <CircularProgress color="secondary" />
+      )
+    } else {
+      return 'Atualizar dados'
+    }
+  }
+
+  function setUpdatingSingleService(id: number) {
+    let copyArray = isUpdating
+
+    if (copyArray.includes(id)) {
+      copyArray = copyArray.filter((number) => number !== id)
+    } else {
+      copyArray.push(id)
+    }
+
+    setIsUpdating(copyArray)
+  }
+
+  async function updateServiceInformation(id: number, state: string, city: string) {
+    setUpdatingSingleService(id)
+
+    await energyOperations.updateManually(state, city)
+
+    setUpdatingSingleService(id)
+  }
+
+  function showModal() {
+    if (showUpdateModal && !!serviceToUpdate) {
+      return (
+        <EditEnergyModal
+          id={serviceToUpdate.id}
+          title={serviceToUpdate.title}
+          updateTime={serviceToUpdate.updateTime}
+          setUpdateServices={setUpdateServices}
+          setViewModal={setShowUpdateModal}
+        />
+      )
+    }
+  }
+
+  function updapeService(id: number, stateAndCity: string, updateTime: number) {
+    setServiceToUpdate({ id, title: stateAndCity, updateTime })
+    setShowUpdateModal(true)
+  }
+
   const columns = [
     { field: 'col1', headerName: 'Cessionária', width: 150 },
     { field: 'col2', headerName: 'Estado/Cidade', width: 250 },
@@ -128,40 +194,43 @@ const ViewEnergyPage: NextPage = () => {
         )
       }
     },
-    // { 
-    //   field: 'col6', 
-    //   headerName: 'Ações', 
-    //   width: 280, 
-    //   disableClickEventBubbling: true, 
-    //   renderCell: (cellValues: any) => {
-    //     const row: any = cellValues['row']
+    { 
+      field: 'col6', 
+      headerName: 'Ações', 
+      width: 280, 
+      disableClickEventBubbling: true, 
+      renderCell: (cellValues: any) => {
+        const row: any = cellValues['row']
 
-    //     const serviceName: string = row['col1']
-    //     const id: number = row['id']
+        const stateAndCity = row['col2'].split('/')
+        const state: string = stateAndCity[0]
+        const city: string = stateAndCity[1]
+        const id: number = row['id']
 
-    //     // const able: number = cellValues['row']['able']
+        const modalTitle: string =  row['col2']
+        const updateTime: number = row['col3']
 
-    //     return (
-    //       <div className={styles.actions_container}>
-    //         <Button 
-    //           variant="contained" 
-    //           color='info'
-    //           onClick={() => updateServiceInformation(id, serviceName)}
-    //         >
-    //           {renderUpdateServiceInformationButtonContent(id)}
-    //         </Button>
+        return (
+          <div className={styles.actions_container}>
+            <Button 
+              variant="contained" 
+              color='info'
+              onClick={() => updateServiceInformation(id, state, city)}
+            >
+              {renderUpdateServiceInformationButtonContent(id)}
+            </Button>
           
-    //         <Button 
-    //           variant="contained" 
-    //           color='warning'
-    //           onClick={() => handleRow(row)}
-    //         >
-    //           Editar
-    //         </Button>
-    //       </div>
-    //     )
-    //   },
-    // },
+            <Button 
+              variant="contained" 
+              color='warning'
+              onClick={() => updapeService(id, modalTitle, updateTime)}
+            >
+              Editar
+            </Button>
+          </div>
+        )
+      },
+    },
   ]
 
   const rows = normalizeServicesData()
@@ -172,6 +241,7 @@ const ViewEnergyPage: NextPage = () => {
         <title>Ver serviços</title>
       </Head>
 
+      {showModal()}
 
       <main className={styles.container}>
         <div style={{ 

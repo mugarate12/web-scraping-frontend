@@ -170,7 +170,6 @@ const ViewsServices: NextPage = () => {
 
     if (result) {
       alertHook.showAlert('cliente atualizado com sucesso!', 'success')
-      alert('informações atualizadas com sucesso')
     } 
   }
 
