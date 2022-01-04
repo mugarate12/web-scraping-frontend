@@ -34,7 +34,7 @@ const CreateEnergy: NextPage = () => {
 
   const statesAndCities = useStatesAndCities({ dealership, state, city })
   const dealershipsAndUpdateTimes = useDealershipsAndUpdateTimes()
-  const energyOperations = useEnergyOperations()
+  const energyOperations = useEnergyOperations({})
   
   function formatOptions(payload: Array<{ value: string, label: string}>) {
     const formatted = payload.map(stateValue => {

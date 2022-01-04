@@ -154,16 +154,16 @@ export default function Menu() {
             onClick={(event) => toggleDrawer(event, '/energy/create')}
             onKeyDown={(event) => toggleDrawer(event, '/energy/create')}
           >
-            <ListItemText primary='Criar monitoramento' sx={{ marginLeft: '20px' }}/>
+            <ListItemText primary='Criar Monitoramento' sx={{ marginLeft: '20px' }}/>
           </ListItem>
           
-          {/* <ListItem 
+          <ListItem 
             button 
-            onClick={(event) => toggleDrawer(event, '/clients')}
-            onKeyDown={(event) => toggleDrawer(event, '/clients')}
+            onClick={(event) => toggleDrawer(event, '/energy')}
+            onKeyDown={(event) => toggleDrawer(event, '/energy')}
           >
-            <ListItemText primary='Ver Clientes' sx={{ marginLeft: '20px' }}/>
-          </ListItem> */}
+            <ListItemText primary='Ver Serviços' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
         </>
       )
     }

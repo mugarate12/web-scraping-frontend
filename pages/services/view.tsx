@@ -300,22 +300,22 @@ const ViewsServices: NextPage = () => {
       {renderEditServiceModal()}
 
       <main className={styles.container}>
-          <div style={{ 
-            height: '100%', 
-            width: '100%',
-            padding: '20px 30px'
-          }}>
-            <DataGrid 
-              rows={rows} 
-              columns={columns}
-              isRowSelectable={() => false}
-              isCellEditable={() => false}
-              // disableSelectionOnClick={true}
-              // disableColumnSelector={true}
-              // disableDensitySelector={true}
-              // onRowClick={(params) => handleRow(params)}
-            />
-          </div>
+        <div style={{ 
+          height: '100%', 
+          width: '100%',
+          padding: '20px 30px'
+        }}>
+          <DataGrid 
+            rows={rows} 
+            columns={columns}
+            isRowSelectable={() => false}
+            isCellEditable={() => false}
+            // disableSelectionOnClick={true}
+            // disableColumnSelector={true}
+            // disableDensitySelector={true}
+            // onRowClick={(params) => handleRow(params)}
+          />
+        </div>
       </main>
     </>
   )
