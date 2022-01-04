@@ -52,6 +52,12 @@ export default function Timer({
       await sleep(2000)
 
       SetUpdate(true)
+    } else if (time === null) {
+      setTimer('execução agendada')
+
+      await sleep(2000)
+
+      SetUpdate(true)
     } else {
       // const actualTime = moment()
       // const moreTime = moment(time)
@@ -66,7 +72,12 @@ export default function Timer({
 
   async function requestUpdate() {
     setLock(true)
-    setTimer('Executando')
+
+    if (time === null) {
+      setTimer('execução agendada')
+    } else {
+      setTimer('Executando')
+    }
 
     await sleep(20000)
 
@@ -75,6 +86,8 @@ export default function Timer({
 
   async function verifyUpdate() {
     if (timer === '00:00:01') {
+      await requestUpdate()
+    } else if (time === null) {
       await requestUpdate()
     }
   }

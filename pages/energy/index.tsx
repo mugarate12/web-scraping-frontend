@@ -5,6 +5,10 @@ import {
 } from 'react'
 
 import {
+  Timer
+} from './../../components'
+
+import {
   Box,
   Button,
   CircularProgress,
@@ -18,16 +22,31 @@ import {
 
 import {
   useEnergy,
-  useEnergyOperations
+  useEnergyOperations,
+  useEnergyUpdateTime
 } from './../../hooks'
 
 import styles from './../../styles/ViewEnergyServices.module.css'
 
 const ViewEnergyPage: NextPage = () => {
   const [ updateServices, setUpdateServices ] = useState<boolean>(false)
-
+  const [ updateServicesUpdateTime, setUpdateServicesUpdateTime ] = useState<boolean>(false)
+  
   const services = useEnergy({ update: updateServices, setUpdate: setUpdateServices })
+  const servicesUpdateTime = useEnergyUpdateTime({ update: updateServicesUpdateTime })
   const energyOperations = useEnergyOperations({ setUpdate: setUpdateServices })
+
+  function getServiceTime(id: number) {
+    let time = ''
+
+    servicesUpdateTime.forEach((serviceUpdateTime) => {
+      if (serviceUpdateTime.cpfl_search_FK === id) {
+        time = serviceUpdateTime.last_execution
+      }
+    })
+
+    return time
+  }
 
   function normalizeServicesData() {
     return services.map((service) => {
@@ -36,7 +55,8 @@ const ViewEnergyPage: NextPage = () => {
         col1: service.dealership,
         col2: `${service.state}/${service.city}`,
         col3: service.update_time,
-        able: service.able
+        able: service.able,
+        time: getServiceTime(service.id)
       }
     })
   }
@@ -89,25 +109,25 @@ const ViewEnergyPage: NextPage = () => {
         )
       },
     },
-    // { 
-    //   field: 'col5', 
-    //   headerName: 'Status de serviço', 
-    //   width: 150,
-    //   renderCell: (cellValues: any) => {
-    //     const row: any = cellValues['row']
+    { 
+      field: 'col5', 
+      headerName: 'Status de serviço', 
+      width: 150,
+      renderCell: (cellValues: any) => {
+        const row: any = cellValues['row']
 
-    //     const time = row['col5']
-    //     const updateTime = row['col2']
+        const time = row['time']
+        const updateTime = row['col3']
 
-    //     return (
-    //       <Timer 
-    //         time={time}
-    //         updateTime={updateTime}
-    //         SetUpdate={setUpdateServicesUpdateTime}
-    //       />
-    //     )
-    //   }
-    // },
+        return (
+          <Timer 
+            time={time}
+            updateTime={updateTime}
+            SetUpdate={setUpdateServicesUpdateTime}
+          />
+        )
+      }
+    },
     // { 
     //   field: 'col6', 
     //   headerName: 'Ações', 
