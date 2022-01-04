@@ -31,6 +31,10 @@ export default function useEnergyUpdateTime({ update, setUpdate }: Params) {
       .then(response => {
         console.log(response.data.data);
         setServicesUpdateTime(response.data.data)
+
+        if (!!setUpdate) {
+          setUpdate(false)
+        }
       })
       .catch(error => {
         console.log(error)

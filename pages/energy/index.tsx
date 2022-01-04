@@ -33,7 +33,7 @@ const ViewEnergyPage: NextPage = () => {
   const [ updateServicesUpdateTime, setUpdateServicesUpdateTime ] = useState<boolean>(false)
   
   const services = useEnergy({ update: updateServices, setUpdate: setUpdateServices })
-  const servicesUpdateTime = useEnergyUpdateTime({ update: updateServicesUpdateTime })
+  const servicesUpdateTime = useEnergyUpdateTime({ update: updateServicesUpdateTime, setUpdate: setUpdateServicesUpdateTime })
   const energyOperations = useEnergyOperations({ setUpdate: setUpdateServices })
 
   function getServiceTime(id: number) {
