@@ -17,7 +17,8 @@ interface createMonitoringInterface {
   dealership: string,
   state: string,
   city: string,
-  update_time: number
+  update_time: number,
+  clientsKeys: Array<number>
 }
 
 interface updateServiceInterface {
@@ -38,11 +39,11 @@ interface Params {
 export default function useEnergyOperations({ setUpdate }: Params) {
   const alertHook = useAlert()
   
-  async function create({ dealership, state, city, update_time }: createMonitoringInterface) {
-    if (!!dealership && !!state && !!city && !!update_time) {
+  async function create({ dealership, state, city, update_time, clientsKeys }: createMonitoringInterface) {
+    if (!!dealership && !!state && !!city && !!update_time && !!clientsKeys && clientsKeys.length > 0) {
       const token = localStorage.getItem('userToken')
       
-      await apiEnergy.post<createResponse>('/service/cpfl', { dealership, state, city, update_time }, {
+      await apiEnergy.post<createResponse>('/service/cpfl', { dealership, state, city, update_time, clientsKeys }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

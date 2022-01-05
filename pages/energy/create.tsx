@@ -17,6 +17,10 @@ import {
 } from '@material-ui/core'
 
 import {
+  SetClientsModal
+} from './../../containers'
+
+import {
   useDealershipsAndUpdateTimes,
   useOptions,
   useServicesOperations,
@@ -31,6 +35,9 @@ const CreateEnergy: NextPage = () => {
   const [ state, setState ] = useState<string>('')
   const [ city, setCity ] = useState<string>('')
   const [ updateTime, setUpdateTime ] = useState<number>()
+
+  const [ showClientsModal, setShowClientsModal ] = useState<boolean>(false)
+  const [ clientsIDs, setClientsIDs ] = useState<Array<number>>([])
 
   const statesAndCities = useStatesAndCities({ dealership, state, city })
   const dealershipsAndUpdateTimes = useDealershipsAndUpdateTimes()
@@ -82,11 +89,26 @@ const CreateEnergy: NextPage = () => {
     return formatted
   }
 
+  function setClientsModal() {
+    if (showClientsModal) {
+      return (
+        <SetClientsModal 
+          title='selecionar clientes'
+          clientsIDs={clientsIDs}
+          setClientsIDs={setClientsIDs}
+          setViewModal={setShowClientsModal}
+        />
+      )
+    }
+  }
+
   return (
     <>
       <Head>
         <title>Criar Monitoramento de energia</title>
       </Head>
+
+      {setClientsModal()}
 
       <main className={styles.container}>
         <Box
@@ -187,6 +209,15 @@ const CreateEnergy: NextPage = () => {
                 }}
                 renderInput={(params) => <TextField {...params} label="Tempo de atualizaçao" />}
               />
+
+              <Button
+                variant='outlined'
+                size='small'
+                color='info'
+                onClick={() => {
+                  setShowClientsModal(true)
+                }}
+              >selecionar clientes</Button>
             </Box>
           </Paper>
 
@@ -207,7 +238,7 @@ const CreateEnergy: NextPage = () => {
               borderTopLeftRadius: '0px',
               borderTopRightRadius: '0px'
             }}
-            onClick={() => energyOperations.create({ dealership, state, city, update_time: Number(updateTime) })}
+            onClick={() => energyOperations.create({ dealership, state, city, update_time: Number(updateTime), clientsKeys: clientsIDs })}
           >monitorar</Button>
         </Box>
       </main>
