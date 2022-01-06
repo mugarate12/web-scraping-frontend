@@ -17,7 +17,12 @@ interface updatePayloadInterface {
   identifier?: string,
   able?: number,
   flow4Energy?: boolean,
-  flow4Detector?: boolean
+  flow4Detector?: boolean,
+  permissionsArray?: Array<{
+    dealership: string,
+    state: string,
+    city: string
+  }>
 }
 
 interface getPermissionsInterface {
@@ -84,7 +89,7 @@ export default function usePublicAccessClientsOperations({
     return permissions
   }
 
-  async function update(clientID: number, { able, identifier, flow4Energy, flow4Detector }: updatePayloadInterface) {
+  async function update(clientID: number, { able, identifier, flow4Energy, flow4Detector, permissionsArray }: updatePayloadInterface) {
     const token = localStorage.getItem('userToken')
     let updatePayload: updatePayloadInterface = {}
 
@@ -104,6 +109,8 @@ export default function usePublicAccessClientsOperations({
       updatePayload.flow4Energy = flow4Energy
     }
 
+    if (!!permissionsArray) updatePayload.permissionsArray = permissionsArray
+
     return await apiDetector.put(`/public/update/${clientID}`, updatePayload, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -111,6 +118,8 @@ export default function usePublicAccessClientsOperations({
     })
       .then(() => {
         setToUpdateState()
+
+        alertHook.showAlert('cliente atualizado com sucesso!', 'success')
 
         return true
       })

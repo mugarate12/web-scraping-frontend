@@ -21,7 +21,8 @@ import {
 } from '@material-ui/icons'
 
 import {
-  EditClientModal
+  EditClientModal,
+  SetServicesModal
 } from './../../containers'
 
 import {
@@ -53,11 +54,11 @@ const ViewClients: NextPage = () => {
  
   const clients = usePublicAccessClients({ updateState: updateRows })
   const clientsOperations = usePublicAccessClientsOperations({ setUpdateState: setUpdateRows })
-  
-  // const services = useServices({ updateState: updateRows, setUpdateState: setUpdateRows })
-  // const servicesOperations = useServicesOperations(setUpdateRows)
+
+  const [ showAccessModal, setShowAccessModal ] = useState<boolean>(false)
 
   const [ isUpdating, setIsUpdating ] = useState<Array<number>>([])
+  const [ clientKeyToUpdate, setClientKeyToUpdate ] = useState<string>('')
 
   function normalizeData() {
     return clients.map((client) => {
@@ -116,6 +117,19 @@ const ViewClients: NextPage = () => {
           name={nameOfClientToUpdate}
           setUpdateRows={setUpdateRows}
           setShowModal={setShowUpdateClientModal}
+        />
+      )
+    }
+  }
+
+  function renderAccessModal() {
+    if (showAccessModal && !!clientKeyToUpdate) {
+      return (
+        <SetServicesModal
+          title='Modificar acessos'
+          setViewModal={setShowAccessModal}
+          clientKey={clientKeyToUpdate}
+          clientID={clientIDToUpdate}
         />
       )
     }
@@ -182,7 +196,7 @@ const ViewClients: NextPage = () => {
     {
       field: 'col4',
       headerName: 'Ações',
-      width: 200,
+      width: 250,
       disableClickEventBubbling: true,
       renderCell: (cellValues: any) => {
         const row = cellValues['row']
@@ -204,10 +218,28 @@ const ViewClients: NextPage = () => {
             >
               Editar
             </Button>
+            
+            <Button 
+              variant="outlined" 
+              color='warning'
+              sx={{
+                minWidth: 80
+              }}
+              onClick={() => {
+                setClientKeyToUpdate(key)
+                setShowAccessModal(true)
+                setClientIDToUpdate(id)
+              }}
+            >
+              Acessos
+            </Button>
 
             <Button 
               variant="contained" 
               color='error'
+              sx={{
+                minWidth: 80
+              }}
               onClick={() => removeClient(identifier)}
             >
               Remover
@@ -225,6 +257,7 @@ const ViewClients: NextPage = () => {
       </Head>
 
       {renderClientModal()}
+      {renderAccessModal()}
 
       <main className={styles.container}>
           <div style={{ 
