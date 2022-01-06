@@ -65,10 +65,16 @@ const ViewEnergyPage: NextPage = () => {
 
   function normalizeServicesData() {
     return services.map((service) => {
+      const state = service.state
+      const formattedState = `${state[0].toUpperCase()}${state.slice(1, state.length)}`
+      
+      const dealership = service.dealership
+      const formattedDealership = `${dealership[0].toUpperCase()}${dealership.slice(1, dealership.length)}`
+
       return {
         id: service.id,
-        col1: service.dealership,
-        col2: `${service.state}/${service.city}`,
+        col1: formattedDealership,
+        col2: `${formattedState}/${service.city}`,
         col3: service.update_time,
         able: service.able,
         time: getServiceTime(service.id)
