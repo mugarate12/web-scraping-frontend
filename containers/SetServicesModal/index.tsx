@@ -144,8 +144,12 @@ export default function SetServicesModal({
     return have
   }
 
-  async function update() {
-    publicAccessClientsOperations.update(clientID, { permissionsArray, flow4Energy: true, flow4Detector: true })
+  async function addPermissions() {
+    await publicAccessClientsOperations.addPermissions(clientID, { permissionsArray })
+  }
+  
+  async function removePermissions() {
+    await publicAccessClientsOperations.removePermissions(clientID, { permissionsArray })
   }
 
   function formatOptions(payload: Array<{ value: string, label: string}>) {
@@ -301,7 +305,8 @@ export default function SetServicesModal({
       </Box>
 
       <div className={styles.actions_container}>
-        <Button variant="contained" color="warning" onClick={() => update()}>Atualizar</Button>
+        <Button variant="contained" color="error" onClick={() => removePermissions()}>Retirar permissões</Button>
+        <Button variant="contained" color="warning" onClick={() => addPermissions()}>Adicionar permissões</Button>
       </div>
     </Modal>
   )

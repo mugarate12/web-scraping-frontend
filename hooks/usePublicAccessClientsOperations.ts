@@ -25,6 +25,14 @@ interface updatePayloadInterface {
   }>
 }
 
+interface addPermissionsPayloadInterface {
+  permissionsArray: Array<{
+    dealership: string,
+    state: string,
+    city: string
+  }>
+}
+
 interface getPermissionsInterface {
   data: Array<string>
 }
@@ -87,6 +95,54 @@ export default function usePublicAccessClientsOperations({
       })
 
     return permissions
+  }
+
+  async function addPermissions(clientID: number, { permissionsArray }: addPermissionsPayloadInterface) {
+    const token = localStorage.getItem('userToken')
+
+    await apiDetector.put(`/public/clienteKey/update/permissions/add/${clientID}`, { permissionsArray }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(() => {
+        setToUpdateState()
+
+        alertHook.showAlert('cliente atualizado com sucesso!', 'success')
+
+        return true
+      })
+      .catch(error => {
+        console.log(error)
+
+        alertHook.showAlert('erro ao atualizar cliente, por favor, tente novamente!', 'error')
+
+        return false
+      })
+  }
+  
+  async function removePermissions(clientID: number, { permissionsArray }: addPermissionsPayloadInterface) {
+    const token = localStorage.getItem('userToken')
+
+    await apiDetector.put(`/public/clienteKey/update/permissions/remove/${clientID}`, { permissionsArray }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(() => {
+        setToUpdateState()
+
+        alertHook.showAlert('cliente atualizado com sucesso!', 'success')
+
+        return true
+      })
+      .catch(error => {
+        console.log(error)
+
+        alertHook.showAlert('erro ao atualizar cliente, por favor, tente novamente!', 'error')
+
+        return false
+      })
   }
 
   async function update(clientID: number, { able, identifier, flow4Energy, flow4Detector, permissionsArray }: updatePayloadInterface) {
@@ -158,6 +214,8 @@ export default function usePublicAccessClientsOperations({
     create,
     update,
     remove,
-    getPermissions
+    getPermissions,
+    addPermissions,
+    removePermissions
   }
 }
