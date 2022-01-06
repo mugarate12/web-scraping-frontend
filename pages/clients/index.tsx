@@ -21,6 +21,10 @@ import {
 } from '@material-ui/icons'
 
 import {
+  ActionConfirmation
+} from './../../components'
+
+import {
   EditClientModal,
   SetServicesModal
 } from './../../containers'
@@ -60,6 +64,10 @@ const ViewClients: NextPage = () => {
   const [ isUpdating, setIsUpdating ] = useState<Array<number>>([])
   const [ clientKeyToUpdate, setClientKeyToUpdate ] = useState<string>('')
 
+  const [ deleteConfirmationModal, setDeleteConfirmationModal ] = useState<boolean>(false)
+  const [ deleteKey, setDeleteKey ] = useState<boolean>(false)
+  const [ clientIdentifierToDelete, setClientIdentifierToDelete ] = useState<string>('')
+
   function normalizeData() {
     return clients.map((client) => {
       return {
@@ -94,8 +102,13 @@ const ViewClients: NextPage = () => {
   }
 
   async function removeClient(identifier: string) {
-    const result = await clientsOperations.remove(identifier)
-
+    setClientIdentifierToDelete(identifier)
+    setDeleteConfirmationModal(true)
+  }
+  
+  async function confirmationRemoveClient() {
+    const result = await clientsOperations.remove(clientIdentifierToDelete)
+  
     if (result) {
       alertHook.showAlert('cliente removido com sucesso!', 'success')
     }
@@ -135,10 +148,28 @@ const ViewClients: NextPage = () => {
     }
   }
 
+  function renderDeleteConfirmationModal() {
+    if (deleteConfirmationModal) {
+      return (
+        <ActionConfirmation
+          title='Deseja deletar key?'
+          setConfirmationAction={setDeleteKey}
+          setShowModal={setDeleteConfirmationModal}
+        />
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (deleteKey) {
+      confirmationRemoveClient()
+    }
+  }, [ deleteKey ])
+
   const rows = normalizeData()
 
   const columns = [
-    { field: 'col1', headerName: 'Cliente', width: 150 },
+    { field: 'col1', headerName: 'Cliente', width: 250 },
     {
       field: 'col2',
       headerName: 'Chave',
@@ -258,6 +289,7 @@ const ViewClients: NextPage = () => {
 
       {renderClientModal()}
       {renderAccessModal()}
+      {renderDeleteConfirmationModal()}
 
       <main className={styles.container}>
           <div style={{ 

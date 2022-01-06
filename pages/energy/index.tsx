@@ -223,6 +223,9 @@ const ViewEnergyPage: NextPage = () => {
             <Button 
               variant="contained" 
               color='warning'
+              sx={{
+                marginLeft: '5px'
+              }}
               onClick={() => updapeService(id, modalTitle, updateTime)}
             >
               Editar

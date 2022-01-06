@@ -58,6 +58,7 @@ export default function EditClientModal({
       alertHook.showAlert('cliente atualizado com sucesso', 'success')
 
       setShowModal(false)
+      setUpdateRows(true)
     }
   }
 
@@ -75,7 +76,6 @@ export default function EditClientModal({
   }, [ clientID ])
 
   useEffect(() => {
-    console.log('permissoes', permissions);
     if (permissions.includes('ACCESS_API_FLOW4ENERGY_DATA')) {
       console.log('object');
       setFlow4Energy(true)
