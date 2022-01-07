@@ -55,6 +55,7 @@ const ViewClients: NextPage = () => {
   const [ showUpdateClientModal, setShowUpdateClientModal ] = useState<boolean>(false)
   const [ clientIDToUpdate, setClientIDToUpdate ] = useState<number>(0)
   const [ nameOfClientToUpdate, setNameOfClientToUpdate ] = useState<string>('')
+  const [ expirationTimeToUpdate, setExpirationTimeToUpdate ] = useState<string>('')
  
   const clients = usePublicAccessClients({ updateState: updateRows })
   const clientsOperations = usePublicAccessClientsOperations({ setUpdateState: setUpdateRows })
@@ -68,12 +69,21 @@ const ViewClients: NextPage = () => {
   const [ deleteKey, setDeleteKey ] = useState<boolean>(false)
   const [ clientIdentifierToDelete, setClientIdentifierToDelete ] = useState<string>('')
 
+  function formatExpirationTime(expirationTime: string) {
+    if (expirationTime === 'undefined') {
+      return 'Indeterminada'
+    } else {
+      return expirationTime
+    }
+  }
+
   function normalizeData() {
     return clients.map((client) => {
       return {
         id: client.id,
         col1: client.identifier,
         col2: client.key,
+        col4: formatExpirationTime(client.expiration_time),
         able: client.able
       }
     })
@@ -128,6 +138,7 @@ const ViewClients: NextPage = () => {
         <EditClientModal
           clientID={clientIDToUpdate}
           name={nameOfClientToUpdate}
+          expirationTime={expirationTimeToUpdate}
           setUpdateRows={setUpdateRows}
           setShowModal={setShowUpdateClientModal}
         />
@@ -226,6 +237,11 @@ const ViewClients: NextPage = () => {
     },
     {
       field: 'col4',
+      headerName: 'Data de expiração',
+      width: 150,
+    },
+    {
+      field: 'col5',
       headerName: 'Ações',
       width: 250,
       disableClickEventBubbling: true,
@@ -235,6 +251,7 @@ const ViewClients: NextPage = () => {
         const id: number = row['id']
         const identifier: string = row['col1']
         const key: string = row['col2']
+        const expirationTimeOfClient = row['col4']
 
         return (
           <div className={styles.key_container}>
@@ -245,6 +262,7 @@ const ViewClients: NextPage = () => {
                 setClientIDToUpdate(id)
                 setNameOfClientToUpdate(identifier)
                 setShowUpdateClientModal(true)
+                setExpirationTimeToUpdate(expirationTimeOfClient)
               }}
             >
               Editar

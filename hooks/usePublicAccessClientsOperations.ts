@@ -15,6 +15,7 @@ import { apiDetector } from './../config'
 
 interface updatePayloadInterface {
   identifier?: string,
+  expiration_time?: string,
   able?: number,
   flow4Energy?: boolean,
   flow4Detector?: boolean,
@@ -52,13 +53,14 @@ export default function usePublicAccessClientsOperations({
     }
   }
 
-  async function create(identifier: string, flow4Detector: boolean, flow4Energy: boolean) {
+  async function create(identifier: string, expirationTime: string, flow4Detector: boolean, flow4Energy: boolean) {
     const token = localStorage.getItem('userToken')
 
     return await apiDetector.post('/public/create', {
       identifier,
       flow4Energy: flow4Energy,
-      flow4Detector: flow4Detector
+      flow4Detector: flow4Detector,
+      expiration_time: expirationTime
     }, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -145,7 +147,7 @@ export default function usePublicAccessClientsOperations({
       })
   }
 
-  async function update(clientID: number, { able, identifier, flow4Energy, flow4Detector, permissionsArray }: updatePayloadInterface) {
+  async function update(clientID: number, { able, identifier, expiration_time, flow4Energy, flow4Detector, permissionsArray }: updatePayloadInterface) {
     const token = localStorage.getItem('userToken')
     let updatePayload: updatePayloadInterface = {}
 
@@ -163,6 +165,10 @@ export default function usePublicAccessClientsOperations({
     
     if (!!flow4Energy) {
       updatePayload.flow4Energy = flow4Energy
+    }
+
+    if (!!expiration_time) {
+      updatePayload.expiration_time = expiration_time
     }
 
     if (!!permissionsArray) updatePayload.permissionsArray = permissionsArray

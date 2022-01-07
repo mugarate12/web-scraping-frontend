@@ -42,19 +42,47 @@ const CreateClient: NextPage = () => {
   const publicAccessClientsOperations = usePublicAccessClientsOperations({})
 
   const [ identifier, setIdentifier ] = useState<string>('')
+  const [ expirationTime, setExpirationTime ] = useState<string>('')
   
   const [ flow4Detector, setFlow4Detector ] = useState<boolean>(false)
   const [ flow4Energy, setFlow4Energy ] = useState<boolean>(false)
 
   async function createClient() {
     if (identifier.length > 0) {
-      const result = await publicAccessClientsOperations.create(identifier, flow4Detector, flow4Energy)
+      const result = await publicAccessClientsOperations.create(identifier, expirationTime, flow4Detector, flow4Energy)
 
       if (result) {
         alertOperation.showAlert('cliente criado com sucesso!', 'success')
       }
     }
   }
+
+  const expirationTimeOptions = [
+    {
+      firstLetter: '1',
+      label: '1 mês',
+      option: '1 mês',
+      value: '1 month'
+    },
+    {
+      firstLetter: '6',
+      label: '6 meses',
+      option: '6 meses',
+      value: '6 months'
+    },
+    {
+      firstLetter: '1',
+      label: '1 ano',
+      option: '1 ano',
+      value: '1 year'
+    },
+    {
+      firstLetter: 'I',
+      label: 'Indeterminado',
+      option: 'Indeterminado',
+      value: 'undefined'
+    },
+  ]
 
   return (
     <>
@@ -107,6 +135,22 @@ const CreateClient: NextPage = () => {
                 }}
                 value={identifier}
                 onChange={(event) => setIdentifier(event.target.value)}
+              />
+
+              <Autocomplete
+                // value={autoCompleteValue}
+                onChange={(event, newValue) => {
+                  if (!!newValue) {
+                    setExpirationTime(newValue.value)
+                  }
+                }}
+                options={expirationTimeOptions}
+                // groupBy={(option) => option.firstLetter}
+                getOptionLabel={(option) => option.option}
+                sx={{
+                  width: 200
+                }}
+                renderInput={(params) => <TextField {...params} label="Tempo de expiração" />}
               />
 
               <Box

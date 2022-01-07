@@ -4,8 +4,10 @@ import {
   SetStateAction,
   useEffect
 } from 'react'
+import moment from 'moment'
 
 import {
+  Autocomplete,
   Button,
   Box,
   Checkbox,
@@ -32,6 +34,7 @@ import styles from './EditClientModal.module.css'
 interface Props {
   clientID: number,
   name: string,
+  expirationTime: string,
   setUpdateRows: Dispatch<SetStateAction<boolean>>,
   setShowModal: Dispatch<SetStateAction<boolean>>,
 }
@@ -39,20 +42,50 @@ interface Props {
 export default function EditClientModal({
   clientID,
   name,
+  expirationTime,
   setUpdateRows,
   setShowModal
 }: Props) {
   const alertHook = useAlert()
   const publicAccessClientsOperations = usePublicAccessClientsOperations({ setUpdateState: setUpdateRows })
 
+  const expirationTimeOptions = [
+    {
+      firstLetter: '1',
+      label: '1 mês',
+      option: '1 mês',
+      value: '1 month'
+    },
+    {
+      firstLetter: '6',
+      label: '6 meses',
+      option: '6 meses',
+      value: '6 months'
+    },
+    {
+      firstLetter: '1',
+      label: '1 ano',
+      option: '1 ano',
+      value: '1 year'
+    },
+    {
+      firstLetter: 'I',
+      label: 'Indeterminado',
+      option: 'Indeterminado',
+      value: 'undefined'
+    },
+  ]
+
   const [ identifier, setIdentifier ] = useState<string>(name)
+  const [ inputExpirationTimeValue, setInputExpirationTimeValue ] = useState(expirationTimeOptions[0])
+  const [ inputExpirationTime, setExpirationTime ] = useState<string>('')
   const [ permissions, setPermissions ] = useState<Array<string>>([])
 
   const [ flow4Detector, setFlow4Detector ] = useState<boolean>(false)
   const [ flow4Energy, setFlow4Energy ] = useState<boolean>(false)
 
   async function updateClient() {
-    const result = await publicAccessClientsOperations.update(clientID, { identifier, flow4Energy, flow4Detector })
+    const result = await publicAccessClientsOperations.update(clientID, { identifier, flow4Energy, flow4Detector, expiration_time: inputExpirationTime })
 
     if (result) {
       alertHook.showAlert('cliente atualizado com sucesso', 'success')
@@ -113,6 +146,23 @@ export default function EditClientModal({
           label="identificador"
           value={identifier}
           onChange={(event) => setIdentifier(event.target.value)}
+        />
+
+        <Autocomplete
+          value={inputExpirationTimeValue}
+          onChange={(event, newValue) => {
+            if (!!newValue) {
+              setExpirationTime(newValue.value)
+              setInputExpirationTimeValue(newValue)
+            }
+          }}
+          options={expirationTimeOptions}
+          // groupBy={(option) => option.firstLetter}
+          getOptionLabel={(option) => option.option}
+          sx={{
+            width: 200
+          }}
+          renderInput={(params) => <TextField {...params} label="Tempo de expiração" />}
         />
 
         <Box
