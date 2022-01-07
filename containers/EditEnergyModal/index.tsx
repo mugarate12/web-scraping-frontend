@@ -20,6 +20,10 @@ import {
 } from '@material-ui/icons'
 
 import {
+	ActionConfirmation
+} from './../../components'
+
+import {
   useAlert,
 	useDealershipsAndUpdateTimes,
 	useEnergyOperations,
@@ -39,7 +43,9 @@ interface Props {
 	dealership: string,
   state: string,
   city: string,
+
 	clientID: number,
+	searchID: number,
 
 	setViewModal: Dispatch<SetStateAction<boolean>>,
 	setUpdateServices: Dispatch<SetStateAction<boolean>>
@@ -51,6 +57,7 @@ export default function EditEnergyModal({
 	updateTime,
 
 	clientID,
+	searchID,
 	dealership,
 	state,
 	city,
@@ -63,6 +70,14 @@ export default function EditEnergyModal({
 	const dealershipsAndUpdateTimes = useDealershipsAndUpdateTimes()
 	const energyOperations = useEnergyOperations({})
 	const publicAccessClientsOperations = usePublicAccessClientsOperations({})
+
+	const [ showUpdatePermissionModal, setShowUpdatePermissionModal ] = useState<boolean>(false)
+	const [ showUpdateModal, setShowUpdateModal ] = useState<boolean>(false)
+	const [ showRemoveModal, setShowRemoveModal ] = useState<boolean>(false)
+
+	const [ confirmUpdatePermission, setConfirmUpdatePermission ] = useState<boolean>(false)
+	const [ confirmUpdate, setConfirmUpdate ] = useState<boolean>(false)
+	const [ confirmDelete, setConfirmDelete ] = useState<boolean>(false)
 
 	function formatOptions(payload: Array<{ value: string, label: string}>) {
     const formatted = payload.map(stateValue => {
@@ -91,11 +106,18 @@ export default function EditEnergyModal({
 		if (result) {
 			setUpdateServices(true)
 			setViewModal(false)
+		} else {
+			setConfirmUpdatePermission(false)
 		}
 	}
 
 	async function update() {
-		await energyOperations.update({ id, updateTime: updateTimeField })
+		const result = await energyOperations.update({ id: searchID, updateTime: updateTimeField })
+	
+		if (result) {
+			setUpdateServices(true)
+			setViewModal(false)
+		}
 	}
 
 	async function remove() {
@@ -104,48 +126,84 @@ export default function EditEnergyModal({
 		if (result) {
 			setUpdateServices(true)
 			setViewModal(false)
+		} else {
+			setConfirmDelete(false)
+		}
+	}
+
+	useEffect(() => {
+		if (confirmUpdate) {
+			update()
+		}
+	}, [ confirmUpdate ])
+
+	useEffect(() => {
+		if (confirmUpdatePermission) {
+			updatePermission()
+		}
+	}, [ confirmUpdatePermission ])
+
+	useEffect(() => {
+		if (confirmDelete) {
+			remove()
+		}
+	}, [ confirmDelete ])
+
+	function renderShowConfirmUpdatePermission() {
+		if (showUpdatePermissionModal) {
+			return (
+				<ActionConfirmation
+					title='quer retirar o acesso deste clinte a esta cidade?'
+					setConfirmationAction={setConfirmUpdatePermission}
+					setShowModal={setShowUpdatePermissionModal}
+				/>
+			)
 		}
 	}
 
 	return (
-		<Modal
-      title={title}
-      setShowModal={setViewModal}
-    >
-			 <Box
-        component="form"
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          '& > :not(style)': { m: 1, width: '25ch' },
-        }}
-        noValidate
-        autoComplete="off"
-      >
+		<>
+			{renderShowConfirmUpdatePermission()}
 
-				<Autocomplete
-					// value={autoCompleteValue}
-					onChange={(event, newValue) => {
-						if (!!newValue) {
-							setUpdateTime(Number(newValue.value))
-						}
-					}}
-					options={formatOptions(dealershipsAndUpdateTimes.updatesTimes).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-					// groupBy={(option) => option.firstLetter}
-					// getOptionLabel={(option) => option.option}
+			<Modal
+				title={title}
+				setShowModal={setViewModal}
+			>
+				<Box
+					component="form"
 					sx={{
-						width: 200
+						display: 'flex',
+						flexDirection: 'column',
+						'& > :not(style)': { m: 1, width: '25ch' },
 					}}
-					renderInput={(params) => <TextField {...params} label="Tempo de atualizaçao" />}
-				/>
+					noValidate
+					autoComplete="off"
+				>
 
-			</Box>
+					<Autocomplete
+						// value={autoCompleteValue}
+						onChange={(event, newValue) => {
+							if (!!newValue) {
+								setUpdateTime(Number(newValue.value))
+							}
+						}}
+						options={formatOptions(dealershipsAndUpdateTimes.updatesTimes).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+						// groupBy={(option) => option.firstLetter}
+						// getOptionLabel={(option) => option.option}
+						sx={{
+							width: 200
+						}}
+						renderInput={(params) => <TextField {...params} label="Tempo de atualizaçao" />}
+					/>
 
-			<div className={styles.actions_container}>
-        <Button variant="contained" color="error" onClick={() => updatePermission()}>Deletar apenas esta</Button>
-        <Button variant="contained" color="error" onClick={() => remove()}>Deletar todos</Button>
-        <Button variant="contained" color="warning" onClick={() => update()}>Atualizar</Button>
-      </div>
-		</Modal>
+				</Box>
+
+				<div className={styles.actions_container}>
+					<Button variant="contained" color="error" onClick={() => setShowUpdatePermissionModal(true)}>Deletar apenas esta</Button>
+					<Button variant="contained" color="error" onClick={() => setShowRemoveModal(true)}>Deletar todos</Button>
+					<Button variant="contained" color="warning" onClick={() => update()}>Atualizar</Button>
+				</div>
+			</Modal>
+		</>
 	)
 }

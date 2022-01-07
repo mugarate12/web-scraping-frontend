@@ -39,6 +39,8 @@ interface EnergyUpdate {
   updateTime: number,
 
   clientID: number,
+  searchID: number,
+
   dealership: string,
   state: string,
   city: string
@@ -78,8 +80,6 @@ const ViewEnergyPage: NextPage = () => {
       const dealership = service.dealership
       const formattedDealership = `${dealership[0].toUpperCase()}${dealership.slice(1, dealership.length)}`
 
-      console.log(service.state, service.city)
-
       return {
         id: service.id,
         col1: formattedDealership,
@@ -87,6 +87,8 @@ const ViewEnergyPage: NextPage = () => {
         col3: service.update_time,
 
         clientID: service.client_FK,
+        searchID: service.cpfl_search_FK,
+
         cliente: service.identifier,
         able: service.able,
         time: getServiceTime(service.cpfl_search_FK)
@@ -160,7 +162,9 @@ const ViewEnergyPage: NextPage = () => {
           dealership={serviceToUpdate.dealership}
           state={serviceToUpdate.state}
           city={serviceToUpdate.city}
+
           clientID={serviceToUpdate.clientID}
+          searchID={serviceToUpdate.searchID}
 
           setUpdateServices={setUpdateServices}
           setViewModal={setShowUpdateModal}
@@ -169,8 +173,8 @@ const ViewEnergyPage: NextPage = () => {
     }
   }
 
-  function updapeService(id: number, stateAndCity: string, updateTime: number, dealership: string, state: string, city: string, clientID: number) {
-    setServiceToUpdate({ id, title: stateAndCity, updateTime, dealership, state, city, clientID })
+  function updapeService(id: number, stateAndCity: string, updateTime: number, dealership: string, state: string, city: string, clientID: number, searchID: number) {
+    setServiceToUpdate({ id, title: stateAndCity, updateTime, dealership, state, city, clientID, searchID })
     setShowUpdateModal(true)
   }
 
@@ -233,6 +237,7 @@ const ViewEnergyPage: NextPage = () => {
 
         const dealership: string = row['col1']
         const clientID: number = row['clientID']
+        const searchID: number = row['searchID']
 
         const modalTitle: string =  row['col2']
         const updateTime: number = row['col3']
@@ -253,7 +258,7 @@ const ViewEnergyPage: NextPage = () => {
               sx={{
                 marginLeft: '5px'
               }}
-              onClick={() => updapeService(id, modalTitle, updateTime, dealership, state, city, clientID)}
+              onClick={() => updapeService(id, modalTitle, updateTime, dealership, state, city, clientID, searchID)}
             >
               Editar
             </Button>
