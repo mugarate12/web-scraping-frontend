@@ -36,6 +36,11 @@ interface Props {
 	id: number,
 	title: string,
 	updateTime: number,
+	dealership: string,
+  state: string,
+  city: string,
+	clientID: number,
+
 	setViewModal: Dispatch<SetStateAction<boolean>>,
 	setUpdateServices: Dispatch<SetStateAction<boolean>>
 }
@@ -44,6 +49,12 @@ export default function EditEnergyModal({
 	id,
 	title,
 	updateTime,
+
+	clientID,
+	dealership,
+	state,
+	city,
+
 	setViewModal,
 	setUpdateServices
 }: Props) {
@@ -51,6 +62,7 @@ export default function EditEnergyModal({
 
 	const dealershipsAndUpdateTimes = useDealershipsAndUpdateTimes()
 	const energyOperations = useEnergyOperations({})
+	const publicAccessClientsOperations = usePublicAccessClientsOperations({})
 
 	function formatOptions(payload: Array<{ value: string, label: string}>) {
     const formatted = payload.map(stateValue => {
@@ -66,6 +78,21 @@ export default function EditEnergyModal({
 
     return formatted
   }
+
+	async function updatePermission() {
+		const result = await publicAccessClientsOperations.removePermissions(clientID, {
+			permissionsArray: [{
+				city,
+				dealership,
+				state
+			}]
+		})
+
+		if (result) {
+			setUpdateServices(true)
+			setViewModal(false)
+		}
+	}
 
 	async function update() {
 		await energyOperations.update({ id, updateTime: updateTimeField })
@@ -115,7 +142,8 @@ export default function EditEnergyModal({
 			</Box>
 
 			<div className={styles.actions_container}>
-        <Button variant="contained" color="error" onClick={() => remove()}>Deletar</Button>
+        <Button variant="contained" color="error" onClick={() => updatePermission()}>Deletar apenas esta</Button>
+        <Button variant="contained" color="error" onClick={() => remove()}>Deletar todos</Button>
         <Button variant="contained" color="warning" onClick={() => update()}>Atualizar</Button>
       </div>
 		</Modal>

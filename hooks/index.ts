@@ -5,6 +5,7 @@ import useDealershipsAndUpdateTimes from "./useDealershipsAndUpdateTimes"
 import useEnergy from './useEnergy'
 import useEnergyOperations from "./useEnergyOperations"
 import useEnergyUpdateTime from "./useEnergyUpdateTime"
+import useEnergyWithClients from "./useEnergyWithClients"
 import useOptions from "./useOptions"
 import usePublicAccessClients from "./usePublicAccessClients"
 import usePublicAccessClientsOperations from "./usePublicAccessClientsOperations"
@@ -25,6 +26,7 @@ export {
   useEnergy,
   useEnergyOperations,
   useEnergyUpdateTime,
+  useEnergyWithClients,
   useOptions,
   usePublicAccessClients,
   usePublicAccessClientsOperations,

@@ -102,7 +102,7 @@ export default function usePublicAccessClientsOperations({
   async function addPermissions(clientID: number, { permissionsArray }: addPermissionsPayloadInterface) {
     const token = localStorage.getItem('userToken')
 
-    await apiDetector.put(`/public/clienteKey/update/permissions/add/${clientID}`, { permissionsArray }, {
+    return await apiDetector.put(`/public/clienteKey/update/permissions/add/${clientID}`, { permissionsArray }, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -126,7 +126,7 @@ export default function usePublicAccessClientsOperations({
   async function removePermissions(clientID: number, { permissionsArray }: addPermissionsPayloadInterface) {
     const token = localStorage.getItem('userToken')
 
-    await apiDetector.put(`/public/clienteKey/update/permissions/remove/${clientID}`, { permissionsArray }, {
+    return await apiDetector.put(`/public/clienteKey/update/permissions/remove/${clientID}`, { permissionsArray }, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

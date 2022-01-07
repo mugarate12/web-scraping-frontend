@@ -27,7 +27,8 @@ import {
 import {
   useEnergy,
   useEnergyOperations,
-  useEnergyUpdateTime
+  useEnergyUpdateTime,
+  useEnergyWithClients
 } from './../../hooks'
 
 import styles from './../../styles/ViewEnergyServices.module.css'
@@ -35,7 +36,12 @@ import styles from './../../styles/ViewEnergyServices.module.css'
 interface EnergyUpdate {
   id: number,
   title: string,
-  updateTime: number
+  updateTime: number,
+
+  clientID: number,
+  dealership: string,
+  state: string,
+  city: string
 }
 
 const ViewEnergyPage: NextPage = () => {
@@ -45,7 +51,8 @@ const ViewEnergyPage: NextPage = () => {
 
   const [ serviceToUpdate, setServiceToUpdate ] = useState<EnergyUpdate>()
   
-  const services = useEnergy({ update: updateServices, setUpdate: setUpdateServices })
+  // const services = useEnergy({ update: updateServices, setUpdate: setUpdateServices })
+  const services = useEnergyWithClients({ update: updateServices, setUpdate: setUpdateServices })
   const servicesUpdateTime = useEnergyUpdateTime({ update: updateServicesUpdateTime, setUpdate: setUpdateServicesUpdateTime })
   const energyOperations = useEnergyOperations({ setUpdate: setUpdateServices })
 
@@ -71,13 +78,18 @@ const ViewEnergyPage: NextPage = () => {
       const dealership = service.dealership
       const formattedDealership = `${dealership[0].toUpperCase()}${dealership.slice(1, dealership.length)}`
 
+      console.log(service.state, service.city)
+
       return {
         id: service.id,
         col1: formattedDealership,
         col2: `${formattedState}/${service.city}`,
         col3: service.update_time,
+
+        clientID: service.client_FK,
+        cliente: service.identifier,
         able: service.able,
-        time: getServiceTime(service.id)
+        time: getServiceTime(service.cpfl_search_FK)
       }
     })
   }
@@ -145,6 +157,11 @@ const ViewEnergyPage: NextPage = () => {
           id={serviceToUpdate.id}
           title={serviceToUpdate.title}
           updateTime={serviceToUpdate.updateTime}
+          dealership={serviceToUpdate.dealership}
+          state={serviceToUpdate.state}
+          city={serviceToUpdate.city}
+          clientID={serviceToUpdate.clientID}
+
           setUpdateServices={setUpdateServices}
           setViewModal={setShowUpdateModal}
         />
@@ -152,8 +169,8 @@ const ViewEnergyPage: NextPage = () => {
     }
   }
 
-  function updapeService(id: number, stateAndCity: string, updateTime: number) {
-    setServiceToUpdate({ id, title: stateAndCity, updateTime })
+  function updapeService(id: number, stateAndCity: string, updateTime: number, dealership: string, state: string, city: string, clientID: number) {
+    setServiceToUpdate({ id, title: stateAndCity, updateTime, dealership, state, city, clientID })
     setShowUpdateModal(true)
   }
 
@@ -161,6 +178,7 @@ const ViewEnergyPage: NextPage = () => {
     { field: 'col1', headerName: 'Cessionária', width: 150 },
     { field: 'col2', headerName: 'Estado/Cidade', width: 250 },
     { field: 'col3', headerName: 'Tempo em minutos', width: 150 },
+    { field: 'cliente', headerName: 'cliente', width: 150 },
     { 
       field: 'col4', 
       headerName: 'Serviço', 
@@ -213,6 +231,9 @@ const ViewEnergyPage: NextPage = () => {
         const city: string = stateAndCity[1]
         const id: number = row['id']
 
+        const dealership: string = row['col1']
+        const clientID: number = row['clientID']
+
         const modalTitle: string =  row['col2']
         const updateTime: number = row['col3']
 
@@ -232,7 +253,7 @@ const ViewEnergyPage: NextPage = () => {
               sx={{
                 marginLeft: '5px'
               }}
-              onClick={() => updapeService(id, modalTitle, updateTime)}
+              onClick={() => updapeService(id, modalTitle, updateTime, dealership, state, city, clientID)}
             >
               Editar
             </Button>
