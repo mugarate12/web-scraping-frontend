@@ -106,6 +106,18 @@ export default function useEnergyOperations({ setUpdate }: Params) {
       })
   }
 
+  async function updateManuallyEquatorial(state: string, city: string) {
+    await apiEnergy.get(`/equatorial/singleUpdate/${state}/${city}`)
+      .then(() => {
+        alertHook.showAlert('serviço atualizado com sucesso!', 'success')
+      })
+      .catch(error => {
+        console.log(error)
+
+        alertHook.showAlert('erro ao atualizar serviço, tente novamente', 'error')
+      })
+  }
+
   async function remove(id: number) {
     const token = localStorage.getItem('userToken')
     let result =  false
@@ -131,6 +143,7 @@ export default function useEnergyOperations({ setUpdate }: Params) {
     create,
     update,
     updateManually,
+    updateManuallyEquatorial,
     remove
   }  
 }

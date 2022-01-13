@@ -144,10 +144,16 @@ const ViewEnergyPage: NextPage = () => {
     setIsUpdating(copyArray)
   }
 
-  async function updateServiceInformation(id: number, state: string, city: string) {
+  async function updateServiceInformation(id: number, state: string, city: string, dealership: string) {
     setUpdatingSingleService(id)
 
-    await energyOperations.updateManually(state, city)
+    // equatorial
+    // cpfl
+    if (dealership === 'cpfl') {
+      await energyOperations.updateManually(state, city)
+    } else {
+      await energyOperations.updateManuallyEquatorial(state, city) 
+    }
 
     setUpdatingSingleService(id)
   }
@@ -182,7 +188,7 @@ const ViewEnergyPage: NextPage = () => {
     { field: 'col1', headerName: 'Cessionária', width: 150 },
     { field: 'col2', headerName: 'Estado/Cidade', width: 250 },
     { field: 'col3', headerName: 'Tempo em minutos', width: 150 },
-    { field: 'cliente', headerName: 'cliente', width: 150 },
+    { field: 'cliente', headerName: 'Cliente', width: 150 },
     { 
       field: 'col4', 
       headerName: 'Serviço', 
@@ -247,7 +253,7 @@ const ViewEnergyPage: NextPage = () => {
             <Button 
               variant="contained" 
               color='info'
-              onClick={() => updateServiceInformation(id, state, city)}
+              onClick={() => updateServiceInformation(id, state, city, dealership )}
             >
               {renderUpdateServiceInformationButtonContent(id)}
             </Button>
