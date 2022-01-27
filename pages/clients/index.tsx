@@ -54,6 +54,7 @@ const ViewClients: NextPage = () => {
 
   const [ showUpdateClientModal, setShowUpdateClientModal ] = useState<boolean>(false)
   const [ clientIDToUpdate, setClientIDToUpdate ] = useState<number>(0)
+  const [ clientFKToUpdate, setClientFkToUpdate ] = useState<number>(0)
   const [ nameOfClientToUpdate, setNameOfClientToUpdate ] = useState<string>('')
   const [ expirationTimeToUpdate, setExpirationTimeToUpdate ] = useState<string>('')
  
@@ -84,7 +85,8 @@ const ViewClients: NextPage = () => {
         col1: client.identifier,
         col2: client.key,
         col4: formatExpirationTime(client.expiration_time),
-        able: client.able
+        able: client.able,
+        clietFK: client.api_access_client_FK
       }
     })
   }
@@ -154,6 +156,7 @@ const ViewClients: NextPage = () => {
           setViewModal={setShowAccessModal}
           clientKey={clientKeyToUpdate}
           clientID={clientIDToUpdate}
+          clientFK={clientFKToUpdate}
         />
       )
     }
@@ -252,6 +255,7 @@ const ViewClients: NextPage = () => {
         const identifier: string = row['col1']
         const key: string = row['col2']
         const expirationTimeOfClient = row['col4']
+        const clientFK = row['clietFK']
 
         return (
           <div className={styles.key_container}>
@@ -277,6 +281,7 @@ const ViewClients: NextPage = () => {
               onClick={() => {
                 setClientKeyToUpdate(key)
                 setShowAccessModal(true)
+                setClientFkToUpdate(clientFK)
                 setClientIDToUpdate(id)
               }}
             >

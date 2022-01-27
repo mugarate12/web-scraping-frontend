@@ -11,6 +11,8 @@ import {
   Box,
   Checkbox,
   InputAdornment,
+  Select,
+  MenuItem,
   Typography,
   TextField
 } from '@material-ui/core'
@@ -26,6 +28,8 @@ import {
   useDealershipsAndUpdateTimes,
   useEnergy,
   useEnergyOperations,
+  useOCRRegistredServices,
+  useOCROperations,
   useStatesAndCities
 } from './../../hooks'
 
@@ -51,18 +55,23 @@ interface Props {
   title: string,
   setViewModal: Dispatch<SetStateAction<boolean>>,
   clientKey: string,
-  clientID: number
+  clientID: number,
+  clientFK: number
 }
 
 export default function SetServicesModal({
   title,
   setViewModal,
   clientKey,
-  clientID
+  clientID,
+  clientFK
 }: Props) {
   const [ dealership, setDealership ] = useState<string>('')
   const [ state, setState ] = useState<string>('')
   const [ city, setCity ] = useState<string>('')
+
+  // Energy, OCR
+  const [ accessType, setAccessType ] = useState<string>('')
 
   const dealershipsAndUpdateTimes = useDealershipsAndUpdateTimes()
   const statesAndCities = useStatesAndCities({ dealership, state, city })
@@ -77,6 +86,18 @@ export default function SetServicesModal({
     state: string,
     city: string
   }>>([])
+
+  const [ ocrState, setOcrState ] = useState<string>('')
+  const [ ocrCity, setOcrCity ] = useState<string>('')
+  const ocrRegistredServices = useOCRRegistredServices({ state: ocrState, city: ocrCity })
+
+  const [ ocrPermissions, setOcrPermissions ] = useState<Array<{
+    client_FK: number, 
+      state: string, 
+      city: string,
+      service: string
+  }>>([])
+  const ocrOperations = useOCROperations()
 
   async function getEnergyServices() {
     await apiEnergy.get<getEnergyServicesInterface>(`/service/cpfl/client/access/${dealership}/${state}/${clientKey}`)
@@ -145,11 +166,19 @@ export default function SetServicesModal({
   }
 
   async function addPermissions() {
-    await publicAccessClientsOperations.addPermissions(clientID, { permissionsArray })
+    if (accessType === 'Energy') {
+      await publicAccessClientsOperations.addPermissions(clientID, { permissionsArray })
+    } else {
+      await ocrOperations.addPermission(ocrPermissions)
+    }
   }
   
   async function removePermissions() {
-    await publicAccessClientsOperations.removePermissions(clientID, { permissionsArray })
+    if (accessType === 'Energy') {
+      await publicAccessClientsOperations.removePermissions(clientID, { permissionsArray })
+    } else {
+      await ocrOperations.removePermission(ocrPermissions)
+    }
   }
 
   function formatOptions(payload: Array<{ value: string, label: string}>) {
@@ -182,10 +211,127 @@ export default function SetServicesModal({
     return formatted
   }
 
+  function renderType() {
+    if (accessType === 'Energy') {
+      return (
+        <>
+          <Autocomplete
+            // value={autoCompleteValue}
+            onChange={(event, newValue) => {
+              if (!!newValue) {
+                setDealership(newValue.value)
+              }
+            }}
+            options={formatOptions(dealershipsAndUpdateTimes.dealerships).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+            groupBy={(option) => option.firstLetter}
+            getOptionLabel={(option) => option.option}
+            sx={{
+              width: 200
+            }}
+            renderInput={(params) => <TextField {...params} label="Concessionárias" />}
+          />
+
+          <Autocomplete
+            // value={autoCompleteValue}
+            onChange={(event, newValue) => {
+              if (!!newValue) {
+                setState(newValue.value)
+              }
+            }}
+            options={formatOptionsToStates(statesAndCities.states).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+            groupBy={(option) => option.firstLetter}
+            getOptionLabel={(option) => option.option}
+            sx={{
+              width: 200
+            }}
+            renderInput={(params) => <TextField {...params} label="Opções" />}
+            disabled={!!statesAndCities.states && statesAndCities.states.length > 0 ? false : true}
+          />
+        </>
+      )
+    } else if (accessType === 'OCR') {
+      return (
+        <>
+          <Autocomplete
+            // value={autoCompleteValue}
+            onChange={(event, newValue) => {
+              if (!!newValue) {
+                setOcrState(newValue.value)
+              }
+            }}
+            options={formatOptions(ocrRegistredServices.states).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+            groupBy={(option) => option.firstLetter}
+            getOptionLabel={(option) => option.option}
+            sx={{
+              width: 200
+            }}
+            renderInput={(params) => <TextField {...params} label="Estado" />}
+          />
+
+          <Autocomplete
+            // value={autoCompleteValue}
+            onChange={(event, newValue) => {
+              if (!!newValue) {
+                setOcrCity(newValue.value)
+              }
+            }}
+            options={formatOptionsToStates(ocrRegistredServices.cities).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+            groupBy={(option) => option.firstLetter}
+            getOptionLabel={(option) => option.option}
+            sx={{
+              width: 200
+            }}
+            renderInput={(params) => <TextField {...params} label="Cidades" />}
+            disabled={!!ocrRegistredServices.cities && ocrRegistredServices.cities.length > 0 ? false : true}
+          />
+        </>
+      )
+    }
+  }
+
+  function renderOcrServices() {
+    console.log('serviços:', ocrRegistredServices.services)
+    return ocrRegistredServices.services.map((service) => {
+      return (
+        <Box
+          component='div'
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}
+        >
+          <Checkbox
+            onChange={() => {
+              const copyArray = ocrPermissions
+
+              copyArray.push({
+                client_FK: clientFK,
+                state: ocrState,
+                city: ocrCity,
+                service: service.value
+              })
+              
+              setOcrPermissions(copyArray)
+            }}
+          />
+
+          <Typography
+              variant='subtitle2'
+              component='p'
+            >
+              {service.label}
+              {/* {energyService.label} */}
+            </Typography>
+        </Box>
+      )
+    })
+  }
+
   function renderCities() {
     let filteredEnergyServices = energyServices.filter(energyService => energyService.dealership === dealership && energyService.state === state)
 
-    if (!!dealership && !!state) {
+    if (!!dealership && !!state && accessType === 'Energy') {
       return filteredEnergyServices.map((energyService) => {
         const cheked = haveService(servicesPermitted, energyService)
 
@@ -252,39 +398,21 @@ export default function SetServicesModal({
         noValidate
         autoComplete="off"
       >
-         <Autocomplete
-            // value={autoCompleteValue}
-            onChange={(event, newValue) => {
-              if (!!newValue) {
-                setDealership(newValue.value)
-              }
-            }}
-            options={formatOptions(dealershipsAndUpdateTimes.dealerships).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-            groupBy={(option) => option.firstLetter}
-            getOptionLabel={(option) => option.option}
-            sx={{
-              width: 200
-            }}
-            renderInput={(params) => <TextField {...params} label="Concessionárias" />}
-          />
+        <Select
+          value={accessType}
+          label='Tipo'
+          onChange={(event, newValue) => {
+            if (!!newValue) {
+              setAccessType(event.target.value)
+            }
+          }}
+        >
+          <MenuItem value='Energy'>Energia</MenuItem>
+          <MenuItem value='OCR'>OCR</MenuItem>
+        </Select>
 
-          <Autocomplete
-            // value={autoCompleteValue}
-            onChange={(event, newValue) => {
-              if (!!newValue) {
-                setState(newValue.value)
-              }
-            }}
-            options={formatOptionsToStates(statesAndCities.states).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-            groupBy={(option) => option.firstLetter}
-            getOptionLabel={(option) => option.option}
-            sx={{
-              width: 200
-            }}
-            renderInput={(params) => <TextField {...params} label="Opções" />}
-            disabled={!!statesAndCities.states && statesAndCities.states.length > 0 ? false : true}
-          />
 
+        {renderType()}
       </Box>
       
       <Box
@@ -302,6 +430,7 @@ export default function SetServicesModal({
         autoComplete="off"
       >
         {renderCities()}
+        {renderOcrServices()}
       </Box>
 
       <div className={styles.actions_container}>
