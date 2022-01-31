@@ -51,6 +51,8 @@ export default function Header() {
       return 'Clientes'
     } else if (router.pathname.includes('energy')) {
       return 'Flow4Energy'
+    } else if (router.pathname.includes('ocr')) {
+      return 'Flow4oOCR'
     }
   }
 

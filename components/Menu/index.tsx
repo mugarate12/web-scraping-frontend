@@ -22,7 +22,8 @@ import {
   VpnKey,
   Notifications,
   Person,
-  PersonalVideo
+  PersonalVideo,
+  LocationSearching
 } from '@material-ui/icons'
 
 import { useMenuContext } from './../../context/menuContext'
@@ -301,7 +302,7 @@ export default function Menu() {
                 onKeyDown={(event) => handleOption(event, () => setOpenOCROptions(!openOCROptions))}
                 >
                 <ListItemIcon>
-                  <BrightnessHigh />
+                  <LocationSearching />
                 </ListItemIcon>
 
                 <ListItemText primary='Flow4OCR'/>
