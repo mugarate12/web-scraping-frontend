@@ -52,7 +52,11 @@ export default function useEnergyOperations({ setUpdate }: Params) {
           alertHook.showAlert('monitoramento criado com sucesso!', 'success')
         })
         .catch(error => {
-          alertHook.showAlert('serviço já pode existir, por favor, tente novamente!', 'error')
+          alertHook.showAlert(`
+          Serviço já pode existir, por favor, tente novamente!
+          Caso o serviço realmente já exista e você queira apenas dar acesso a um cliente, vá à Clientes-> Ver Clientes
+          Haverá um opção "Acessos" e a disponibilidade de acesso nas opções Energy
+          `, 'error')
         })
     } else {
       alertHook.showAlert('preencha todos os campos!', 'warning')
