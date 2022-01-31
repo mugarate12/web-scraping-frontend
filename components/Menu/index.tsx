@@ -34,6 +34,7 @@ export default function Menu() {
   const [ openServicesOptions, setOpenServicesOptions ] = useState<boolean>(false)
   const [ openClientsOptions, setOpenClientsOptions ] = useState<boolean>(false)
   const [ openEnergyOptions, setOpenEnergyOptions ] = useState<boolean>(false)
+  const [ openOCROptions, setOpenOCROptions ] = useState<boolean>(false)
 
   const router = useRouter()
 
@@ -168,6 +169,30 @@ export default function Menu() {
       )
     }
   }
+  
+  function renderOCROptions() {
+    if (openOCROptions) {
+      return (
+        <>
+          {/* <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/energy/create')}
+            onKeyDown={(event) => toggleDrawer(event, '/energy/create')}
+          >
+            <ListItemText primary='Criar Monitoramento' sx={{ marginLeft: '20px' }}/>
+          </ListItem> */}
+          
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/ocr')}
+            onKeyDown={(event) => toggleDrawer(event, '/ocr')}
+          >
+            <ListItemText primary='Ver Serviços' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
+        </>
+      )
+    }
+  }
 
   function exitApp() {
     localStorage.removeItem('userToken')
@@ -269,6 +294,22 @@ export default function Menu() {
               </ListItem>
 
               {renderEnergyOptions()}
+              
+              <ListItem 
+                button
+                onClick={(event) => handleOption(event, () => setOpenOCROptions(!openOCROptions))}
+                onKeyDown={(event) => handleOption(event, () => setOpenOCROptions(!openOCROptions))}
+                >
+                <ListItemIcon>
+                  <BrightnessHigh />
+                </ListItemIcon>
+
+                <ListItemText primary='Flow4OCR'/>
+
+                {renderArrow(openOCROptions)}
+              </ListItem>
+
+              {renderOCROptions()}
               
               <ListItem 
                 button

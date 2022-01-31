@@ -40,9 +40,25 @@ export default function useOCROperations() {
         alertHook.showAlert('erro ao remover permissões', 'error')
       })
   }
+
+  async function updateServiceAble(state: string, city: string, service: string, able: number) {
+    await apiEnergy.put('/ocr/update/able', {
+      state,
+      city,
+      service,
+      able
+    })
+      .then(() => {
+        alertHook.showAlert('Serviço atualizado com sucesso!', 'success')
+      })
+      .catch(() => {
+        alertHook.showAlert('Erro ao atualizar serviço, por favor, tente novamente!', 'error')
+      })
+  }
   
   return {
     addPermission,
-    removePermission
+    removePermission,
+    updateServiceAble
   }
 }

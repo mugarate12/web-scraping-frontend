@@ -8,6 +8,7 @@ import useEnergyUpdateTime from "./useEnergyUpdateTime"
 import useEnergyWithClients from "./useEnergyWithClients"
 import useOCRRegistredServices from "./useOCRRegistredServices"
 import useOCROperations from "./useOCROperations"
+import useOCRServices from './useOCRServices'
 import useOptions from "./useOptions"
 import usePublicAccessClients from "./usePublicAccessClients"
 import usePublicAccessClientsOperations from "./usePublicAccessClientsOperations"
@@ -29,8 +30,9 @@ export {
   useEnergyOperations,
   useEnergyUpdateTime,
   useEnergyWithClients,
-  useOCRRegistredServices,
   useOCROperations,
+  useOCRRegistredServices,
+  useOCRServices,
   useOptions,
   usePublicAccessClients,
   usePublicAccessClientsOperations,
