@@ -39,13 +39,13 @@ const ImportHosts: NextPage = () => {
   const alertHook = useAlert()
   const zabbix = useZabbix()
 
-  const [ url, setURL ] = useState<string>('http://localhost/zabbix')
-  const [ user, setUser ] = useState<string>('Admin')
+  const [ url, setURL ] = useState<string>('')
+  const [ user, setUser ] = useState<string>('')
 
-  const [ password, setPassword ] = useState<string>('zabbix')
+  const [ password, setPassword ] = useState<string>('')
   const [ showPassword, setShowPassword ] = useState<boolean>(false)
 
-  const [ link, setLink ] = useState<string>('https://docs.google.com/spreadsheets/d/1gy-tg3lNgEVJtj_UTVJ5x_6-3PynpZaA3dL8MftGFDA/edit#gid=0')
+  const [ link, setLink ] = useState<string>('')
 
   const [ authToken, setAuthToken ] = useState<string>('')
   const [ loginControl, setLoginControl ] = useState<boolean>(true)
