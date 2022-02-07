@@ -103,9 +103,6 @@ const ImportHosts: NextPage = () => {
 
       const validateWorksheet = zabbix.validateWorksheet(worksheetData)
 
-      console.log('worksheet data: ', worksheetData)
-      console.log('validate worksheet', validateWorksheet)
-
       setWorksheet(worksheetData)
 
       if (worksheetData.length > 0 && validateWorksheet) {
@@ -147,7 +144,8 @@ const ImportHosts: NextPage = () => {
       })
 
       // send informations
-      await zabbix.sendInformationsToZabbix(url, authToken, worksheet.slice(0, 1), templatesIDs, proxiesSelecteds)
+      await zabbix.sendInformationsToZabbix(url, authToken, worksheet, templatesIDs, proxiesSelecteds)
+      alertHook.showAlert('Informações adicionadas!', 'success')
     } else {
       alertHook.showAlert('selecione ao menos um template e um proxy, por favor', 'error')
     }
