@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core'
 
 import {
+  Archive,
   ArrowUpward,
   ArrowDownward,
   BrightnessHigh,
@@ -36,6 +37,7 @@ export default function Menu() {
   const [ openClientsOptions, setOpenClientsOptions ] = useState<boolean>(false)
   const [ openEnergyOptions, setOpenEnergyOptions ] = useState<boolean>(false)
   const [ openOCROptions, setOpenOCROptions ] = useState<boolean>(false)
+  const [ openAutomatizationOptions, setOpenAutomatizationOptions ] = useState<boolean>(false)
 
   const router = useRouter()
 
@@ -194,6 +196,30 @@ export default function Menu() {
       )
     }
   }
+  
+  function renderAutomatizationptions() {
+    if (openAutomatizationOptions) {
+      return (
+        <>
+          {/* <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/energy/create')}
+            onKeyDown={(event) => toggleDrawer(event, '/energy/create')}
+          >
+            <ListItemText primary='Criar Monitoramento' sx={{ marginLeft: '20px' }}/>
+          </ListItem> */}
+          
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/automatization/importHosts')}
+            onKeyDown={(event) => toggleDrawer(event, '/automatization/importHosts')}
+          >
+            <ListItemText primary='Importar Hosts' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
+        </>
+      )
+    }
+  }
 
   function exitApp() {
     localStorage.removeItem('userToken')
@@ -311,6 +337,22 @@ export default function Menu() {
               </ListItem>
 
               {renderOCROptions()}
+
+              <ListItem 
+                button
+                onClick={(event) => handleOption(event, () => setOpenAutomatizationOptions(!openAutomatizationOptions))}
+                onKeyDown={(event) => handleOption(event, () => setOpenAutomatizationOptions(!openAutomatizationOptions))}
+                >
+                <ListItemIcon>
+                  <Archive />
+                </ListItemIcon>
+
+                <ListItemText primary='Automatização'/>
+
+                {renderArrow(openAutomatizationOptions)}
+              </ListItem>
+
+              {renderAutomatizationptions()}
               
               <ListItem 
                 button

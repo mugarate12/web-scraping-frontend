@@ -53,6 +53,14 @@ export default function Header() {
       return 'Flow4Energy'
     } else if (router.pathname.includes('ocr')) {
       return 'Flow4oOCR'
+    } else if (router.pathname.includes('automatization')) {
+      let name = 'Automatização'
+
+      if (router.pathname.includes('importHosts')) {
+        name += ': Importar Hosts'
+      }
+
+      return name
     }
   }
 

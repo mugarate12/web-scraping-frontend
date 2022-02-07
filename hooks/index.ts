@@ -20,6 +20,7 @@ import useTimeToExecuteRoutine from "./useTimeToExecuteRoutine"
 import useToken from "./useToken"
 import useUsers from "./useUsers"
 import useUsersOperations from "./useUsersOperations"
+import useZabbix from "./useZabbix"
 
 export {
   useAlert,
@@ -43,5 +44,6 @@ export {
   useTimeToExecuteRoutine,
   useToken,
   useUsers,
-  useUsersOperations
+  useUsersOperations,
+  useZabbix
 }
