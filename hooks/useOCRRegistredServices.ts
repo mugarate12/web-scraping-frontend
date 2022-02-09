@@ -63,7 +63,6 @@ export default function useOCRRegistredServices({ state, city }: Params) {
   }
   
   async function getServices() {
-    console.log('renderOcrServices', `/ocr/registred/${state}/${city}/services`);
     await apiDetector.get<ServicesResponse>(`/ocr/registred/${state}/${city}/services`)
       .then(response => {
         setServices(response.data.services)

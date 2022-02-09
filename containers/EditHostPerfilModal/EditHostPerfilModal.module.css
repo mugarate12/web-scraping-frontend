@@ -1,0 +1,10 @@
+.actions_container {
+  width: 100%;
+
+  margin-top: 15px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 10px;
+}

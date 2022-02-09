@@ -201,13 +201,21 @@ export default function Menu() {
     if (openAutomatizationOptions) {
       return (
         <>
-          {/* <ListItem 
+          <ListItem 
             button 
-            onClick={(event) => toggleDrawer(event, '/energy/create')}
-            onKeyDown={(event) => toggleDrawer(event, '/energy/create')}
+            onClick={(event) => toggleDrawer(event, '/automatization/createHostPerfil')}
+            onKeyDown={(event) => toggleDrawer(event, '/automatization/createHostPerfil')}
           >
-            <ListItemText primary='Criar Monitoramento' sx={{ marginLeft: '20px' }}/>
-          </ListItem> */}
+            <ListItemText primary='Criar Perfil' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
+          
+          <ListItem 
+            button 
+            onClick={(event) => toggleDrawer(event, '/automatization/viewHostsPerfis')}
+            onKeyDown={(event) => toggleDrawer(event, '/automatization/viewHostsPerfis')}
+          >
+            <ListItemText primary='Ver Perfis' sx={{ marginLeft: '20px' }}/>
+          </ListItem>
           
           <ListItem 
             button 
