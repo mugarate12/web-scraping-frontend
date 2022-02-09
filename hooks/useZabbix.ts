@@ -165,24 +165,6 @@ export default function useZabbix () {
       })
   }
 
-  async function getHost(url: string, token: string) {
-    await axios.post(makeUrl(url), {
-      "jsonrpc": "2.0",
-      "method": "host.get",
-      "params": {
-        output: 'extend'
-      },
-      "id": 1,
-      "auth": token
-    })
-      .then(response => {
-        console.log(response.data)
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  }
-
   async function createHostGroup(url: string, token: string, groupName: string) {
     // const groupName = 'example group'
     let groupsIDs: Array<string> = []
@@ -324,6 +306,398 @@ export default function useZabbix () {
     }
   }
 
+  async function haveHost(url: string, token: string, hostName: string) {
+    let result = false
+    
+    await axios.post<{
+      id: number,
+      jsonrpc: string,
+      result: Array<any>
+    }>(makeUrl(url), {
+      "jsonrpc": "2.0",
+      "method": "host.get",
+      "params": {
+        output: 'extend',
+        filter: {
+          host: [
+            hostName
+          ]
+        }
+      },
+      "id": 1,
+      "auth": token
+    })
+      .then(response => {
+        if (response.data.result.length > 0) {
+          result = true
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
+
+    return result
+  }
+
+  async function getHost(url: string, token: string, hostName: string) {
+    let hostID = ''
+    
+    await axios.post<{
+      id: number,
+      jsonrpc: string,
+      result: Array<{
+        hostid: string,
+        host: string
+      }>
+    }>(makeUrl(url), {
+      "jsonrpc": "2.0",
+      "method": "host.get",
+      "params": {
+        output: 'extend',
+        "selectParentTemplates": [
+          "templateid",
+          "name"
+        ],
+        filter: {
+          host: [
+            hostName
+          ]
+        },
+        selectMacros: true
+      },
+      "id": 1,
+      "auth": token
+    })
+      .then(response => {
+        console.log(response.data.result);
+        // hostID = response.data.result
+        if (response.data.result.length > 0) {
+          hostID = response.data.result[0].hostid
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
+
+    return hostID
+  }
+
+  async function createHost(
+    accessInformations: {
+      url: string,
+      token: string,
+    },
+    equipamentInformations: {
+      group: string,
+      name: string,
+      community: string,
+      ip: string,
+      version: string,
+      description: string
+    },
+    complementInformations: {
+      proxySelected: Array<{
+        host: string,
+        proxyid: string
+      }>,
+      templatesIDS: Array<number>
+    }
+  ) {
+    const equipamentGroup = equipamentInformations.group
+    const equipamentName = equipamentInformations.name
+    const equipamentCommunity = equipamentInformations.community
+    const equipamentIp = equipamentInformations.ip
+    const equipamentVersion = equipamentInformations.version
+    const equipamentDescription = equipamentInformations.description
+
+    const url = accessInformations.url
+    const token = accessInformations.token
+
+    const proxySelected = complementInformations.proxySelected
+    const templatesIDS = complementInformations.templatesIDS
+
+    const groupID = await getGroupID(url, token, equipamentGroup)
+
+    const host = equipamentName.trim()
+    const proxy_hostid = proxySelected[0].proxyid
+
+     // modelo/marca
+     const macros = [
+      {
+        macro: '{$SNMP_COMMUNITY}',
+        value: equipamentCommunity.trim(),
+        "description": equipamentDescription.trim()
+      }
+    ]
+
+    const groups = [
+      {
+        'groupid': groupID[0]
+      }
+    ]
+
+    // versão é retirada da tabela tendo que se v1 === 1 e se v2 === 2
+    let version = 1
+        
+    if (equipamentVersion.includes('2')) {
+      version = 2
+    }
+
+    if (equipamentVersion.includes('1')) {
+      version = 1
+    }
+    
+    if (equipamentVersion.includes('3')) {
+      version = 3
+    }
+
+     // ip vem da tabela
+    const interfaces = [
+      {
+        'type': 2,
+        'useip': 1,
+        'main': 1,
+        // get to row
+        'ip': equipamentIp,
+        'dns': '',
+        'port': '161',
+        'details': {
+          // get to row
+          'version': version,
+          'bulk': 1,
+          'community': '{$SNMP_COMMUNITY}'
+        }
+      },
+      {
+        'type': 1,
+        'useip': 1,
+        'main': 1,
+        // get to row
+        'ip': equipamentIp,
+        'dns': '',
+        'port': '10050',
+        'details': {
+          // get to row
+          'version': version,
+          'bulk': 1,
+          'community': '{$SNMP_COMMUNITY}'
+
+        }
+      }
+    ]
+
+    const templates = templatesIDS.map((templateID) => {
+      return {
+        'templateid': String(templateID)
+      }
+    })
+
+    // request body params
+    const params = {
+      'host': host,
+      'proxy_hostid': proxy_hostid,
+      'macros': macros,
+      'groups': groups,
+      'interfaces': interfaces,
+      'templates': templates
+    }
+
+    await axios.post(makeUrl(url), {
+      "jsonrpc": "2.0",
+      "method": "host.create",
+      "params": params,
+      "id": 1,
+      "auth": token
+    })
+      .then(response => {
+        console.log('send informations response:: ', response.data)
+      })
+      .catch(error => {
+        console.log('send informations error:', error)
+      })
+  }
+
+  async function isRowUpdatable() {
+    const isUpdatable = false
+    let updateInformation: {
+      lineOfWorksheet: number,
+
+      isGroup: boolean,
+      isName: boolean,
+      isCommunity: boolean,
+      isIP: boolean,
+      isVersion: boolean,
+      isDescription: boolean
+    } = {
+      lineOfWorksheet: 0,
+
+      isGroup: false,
+      isName: false,
+      isCommunity: false,
+      isIP: false,
+      isVersion: false,
+      isDescription: false
+    }
+
+
+
+    return {
+      isUpdatable,
+      updateInformation
+    }
+  }
+
+  async function updateHost(
+    accessInformations: {
+      url: string,
+      token: string,
+    },
+    equipamentInformations: {
+      hostID: string,
+
+      group: string,
+      name: string,
+      community: string,
+      ip: string,
+      version: string,
+      description: string
+    },
+    complementInformations: {
+      proxySelected: Array<{
+        host: string,
+        proxyid: string
+      }>,
+      templatesIDS: Array<number>
+    }
+  ) {
+    const equipamentGroup = equipamentInformations.group
+    const equipamentName = equipamentInformations.name
+    const equipamentCommunity = equipamentInformations.community
+    const equipamentIp = equipamentInformations.ip
+    const equipamentVersion = equipamentInformations.version
+    const equipamentDescription = equipamentInformations.description
+
+    const url = accessInformations.url
+    const token = accessInformations.token
+
+    const proxySelected = complementInformations.proxySelected
+    const templatesIDS = complementInformations.templatesIDS
+
+    const groupID = await getGroupID(url, token, equipamentGroup)
+
+    const host = equipamentName.trim()
+    const proxy_hostid = proxySelected[0].proxyid
+
+    // modelo/marca
+    const macros = [
+      {
+        macro: '{$SNMP_COMMUNITY}',
+        value: equipamentCommunity.trim(),
+        "description": equipamentDescription.trim()
+      }
+    ]
+
+    const groups = [
+      {
+        'groupid': groupID[0]
+      }
+    ]
+
+    // versão é retirada da tabela tendo que se v1 === 1 e se v2 === 2
+    let version = 1
+        
+    if (equipamentVersion.includes('2')) {
+      version = 2
+    }
+
+    if (equipamentVersion.includes('1')) {
+      version = 1
+    }
+    
+    if (equipamentVersion.includes('3')) {
+      version = 3
+    }
+
+    const interfaces = [
+      {
+        'type': 2,
+        'useip': 1,
+        'main': 1,
+        // get to row
+        'ip': equipamentIp,
+        'dns': '',
+        'port': '161',
+        'details': {
+          // get to row
+          'version': version,
+          'bulk': 1,
+          'community': '{$SNMP_COMMUNITY}'
+        }
+      },
+      {
+        'type': 1,
+        'useip': 1,
+        'main': 1,
+        // get to row
+        'ip': equipamentIp,
+        'dns': '',
+        'port': '10050',
+        'details': {
+          // get to row
+          'version': version,
+          'bulk': 1,
+          'community': '{$SNMP_COMMUNITY}'
+
+        }
+      }
+    ]
+
+    const templates = templatesIDS.map((templateID) => {
+      return {
+        'templateid': String(templateID)
+      }
+    })
+
+    // request body params
+    const params = {
+      'hostid': equipamentInformations.hostID,
+      'macros': macros,
+      'groups': groups,
+      'templates': templates
+    }
+
+    await axios.post(makeUrl(url), {
+      "jsonrpc": "2.0",
+      "method": "host.update",
+      "params": params,
+      "id": 1,
+      "auth": token
+    })
+      .then(response => {
+        console.log('send informations response:: ', response.data)
+      })
+      .catch(error => {
+        console.log('send informations error:', error)
+      })
+    
+      await axios.post(makeUrl(url), {
+      "jsonrpc": "2.0",
+      "method": "host.update",
+      "params": {
+        ...params,
+        'interfaces': interfaces
+      },
+      "id": 1,
+      "auth": token
+    })
+      .then(response => {
+        console.log('send informations response:: ', response.data)
+      })
+      .catch(error => {
+        console.log('send informations error:', error)
+      })
+  }
+
   async function sendInformationsToZabbix(
     url: string,
     token: string,
@@ -334,7 +708,16 @@ export default function useZabbix () {
       proxyid: string
     }>
   ) {
-    // getHost(url, token)
+    let updatesToMake: Array<{
+      lineOfWorksheet: number,
+
+      isGroup: boolean,
+      isName: boolean,
+      isCommunity: boolean,
+      isIP: boolean,
+      isVersion: boolean,
+      isDescription: boolean
+    }> = []
 
     for (let index = 0; index < worksheetData.length; index++) {
       const row = worksheetData[index]
@@ -345,130 +728,50 @@ export default function useZabbix () {
       const equipamentIp = row[3]
       const equipamentVersion = row[4]
       const equipamentDescription = row[5]
-
-      console.log(`
-        name: ${equipamentName}
-        grupo: ${equipamentGroup}
-        comunidade: ${equipamentCommunity}
-        ip: ${equipamentIp}
-        versão: ${equipamentVersion}
-        descrição: ${equipamentDescription}
-      `)
       
-      if (row.length > 0) {
-        const groupID = await getGroupID(url, token, row[0])
-
-        //  proxy name
-        const host = equipamentName.trim()
-        // proy id
-        const proxy_hostid = proxySelected[0].proxyid
-
-        // modelo/marca
-        const macros = [
-          {
-            macro: '{$SNMP_COMMUNITY}',
-            // get to row
-            value: equipamentCommunity.trim(),
-            "description": equipamentDescription.trim()
-          }
-        ]
-
-        const groups = [
-          {
-            'groupid': groupID[0]
-          }
-        ]
-
-        // versão é retirada da tabela tendo que se v1 === 1 e se v2 === 2
-        let version = 1
+      // get host
+      const isHaveHost = await haveHost(url, token, equipamentName)
+      // if have host, indicate update
+      if (isHaveHost) {
+        const hostID = await getHost(url, token, equipamentName)
         
-        if (equipamentVersion.includes('2')) {
-          version = 2
-        }
+        await updateHost(
+          { url, token },
+          { 
+            hostID: hostID,
 
-        if (equipamentVersion.includes('1')) {
-          version = 1
-        }
-        
-        if (equipamentVersion.includes('3')) {
-          version = 3
-        }
-        // ip vem da tabela
-        const interfaces = [
-          {
-            'type': 2,
-            'useip': 1,
-            'main': 1,
-            // get to row
-            'ip': equipamentIp,
-            'dns': '',
-            'port': '161',
-            'details': {
-              // get to row
-              'version': version,
-              'bulk': 1,
-              'community': '{$SNMP_COMMUNITY}'
-            }
+            group: equipamentGroup,
+            name: equipamentName,
+            community: equipamentCommunity,
+            ip: equipamentIp,
+            version: equipamentVersion,
+            description: equipamentDescription
           },
           {
-            'type': 1,
-            'useip': 1,
-            'main': 1,
-            // get to row
-            'ip': equipamentIp,
-            'dns': '',
-            'port': '10050',
-            'details': {
-              // get to row
-              'version': version,
-              'bulk': 1,
-              'community': '{$SNMP_COMMUNITY}'
-
-            }
+            proxySelected,
+            templatesIDS
           }
-        ]
-
-        const templates = templatesIDS.map((templateID) => {
-          return {
-            'templateid': String(templateID)
+        )
+      } else {
+        // if not, create this
+        await createHost(
+          { url, token },
+          { 
+            group: equipamentGroup,
+            name: equipamentName,
+            community: equipamentCommunity,
+            ip: equipamentIp,
+            version: equipamentVersion,
+            description: equipamentDescription
+          },
+          {
+            proxySelected,
+            templatesIDS
           }
-        })
-
-        console.log('macros:', macros)
-        console.log('groups: ', groups)
-        console.log('templates: ', templates)
-        console.log('interfaces: ', interfaces)
-
-        // params
-        const params = {
-          'host': host,
-          'proxy_hostid': proxy_hostid,
-          'macros': macros,
-          'groups': groups,
-          'interfaces': interfaces,
-          'templates': templates
-        }
-
-        console.log('parametros: ', params)
-
-        await axios.post(makeUrl(url), {
-          "jsonrpc": "2.0",
-          "method": "host.create",
-          "params": params,
-          "id": 1,
-          "auth": token
-        })
-          .then(response => {
-            console.log('send informations response:: ', response.data)
-          })
-          .catch(error => {
-            console.log('send informations error:', error)
-          })
+        )
       }
     }
   }
-
-  // create host create
 
   return {
     // useAuth
