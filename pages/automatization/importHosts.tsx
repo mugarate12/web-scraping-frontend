@@ -13,7 +13,8 @@ import {
   InputAdornment,
   IconButton,
   TextField,
-  Typography
+  Typography,
+  Autocomplete
 } from '@mui/material'
 
 import { 
@@ -30,7 +31,8 @@ import {
 
 import {
   useAlert,
-  useZabbix
+  useZabbix,
+  useHostsPerfis
 } from './../../hooks'
 
 import styles from '../../styles/importHosts.module.css'
@@ -38,6 +40,8 @@ import styles from '../../styles/importHosts.module.css'
 const ImportHosts: NextPage = () => {
   const alertHook = useAlert()
   const zabbix = useZabbix()
+
+  const hostsPerfis = useHostsPerfis({})
 
   const [ url, setURL ] = useState<string>('')
   const [ user, setUser ] = useState<string>('')
@@ -171,10 +175,44 @@ const ImportHosts: NextPage = () => {
     }
   }
 
+  function formatOptions() {
+    const formatted = hostsPerfis.map((perfil) => {
+      const firstLetter = perfil.name[0].toUpperCase()
+      const option = perfil.name
+
+      return {
+        firstLetter, 
+        option,
+        ...perfil
+      }
+    })
+
+    return formatted
+  }
+
   function renderLogin() {
     if (actionType === 'login') {
       return (
         <>
+          <Autocomplete
+            // value={autoCompleteValue}
+            onChange={(event, newValue) => {
+              if (!!newValue) {
+                setUser(newValue.user)
+                setPassword(newValue.password)
+                setURL(newValue.url)
+                setLink(newValue.worksheet_link)
+              }
+            }}
+            options={formatOptions().sort((a, b) => b.firstLetter.localeCompare(a.firstLetter))}
+            groupBy={(option) => option.firstLetter}
+            getOptionLabel={(option) => option.option}
+            sx={{
+              width: 200
+            }}
+            renderInput={(params) => <TextField {...params} label="Perfis" />}
+          />
+
           <TextField
             label="url"
             value={url}
