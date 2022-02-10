@@ -7,9 +7,7 @@ import {
 import {
   Box,
   Button,
-  CircularProgress,
-  Paper,
-  Link
+  Typography
 } from '@material-ui/core'
 
 import { 
@@ -111,10 +109,30 @@ const ViewOCRServices: NextPage = () => {
       </Head>
 
       <main className={styles.container}>
+        <Typography
+          variant='subtitle1'
+          sx={{
+            padding: '0px 30px',
+            paddingTop: '5px'
+          }}
+        >
+          {`Caso queira, uma vez que esteja habilitado, associar um cliente a um serviço acesse: "Clientes" -> "Ver clientes". `}
+        </Typography>
+
+        <Typography
+          variant='subtitle1'
+          sx={{
+            padding: '0px 30px',
+            paddingTop: '5px'
+          }}
+        >
+          No cliente desejado selecione "Acessos", selecione "OCR" informando em seguida Estado e Cidade para selecionar quais serviços este cliente deve ter acesso
+        </Typography>
+
         <div style={{ 
           height: '100%', 
           width: '100%',
-          padding: '20px 30px'
+          padding: '10px 30px'
         }}>
           <DataGrid 
             rows={rows} 

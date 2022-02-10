@@ -382,11 +382,23 @@ export default function SetServicesModal({
     }
   }
 
+  function renderHelperTextToOCR() {
+    if (accessType === 'OCR') {
+      return (
+        <Typography>
+          {`Aparecerão somente os serviços que estiverem verificados, caso não haja algum que deseja, por favor acesse "Flow4OCR" => "Ver serviços" e habilite o que desejar`}
+        </Typography>
+      )
+    }
+  }
+
   return (
     <Modal
       title={title}
       setShowModal={setViewModal}
       >
+      {renderHelperTextToOCR()}
+
       <Box
         component="form"
         sx={{
