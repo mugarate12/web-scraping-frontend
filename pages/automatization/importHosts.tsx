@@ -151,7 +151,13 @@ const ImportHosts: NextPage = () => {
       })
 
       // send informations
+      alertHook.showAlert('Atualizando dados e enviando ', 'warning')
+
+      const worksheetData = await zabbix.getWorksheetRowsData(link)
+      setWorksheet(worksheetData)
+
       await zabbix.sendInformationsToZabbix(url, authToken, worksheet, templatesIDs, proxiesSelecteds)
+      
       alertHook.showAlert('Informações adicionadas!', 'success')
     } else {
       alertHook.showAlert('selecione ao menos um template', 'error')
@@ -694,9 +700,11 @@ const ImportHosts: NextPage = () => {
             <div
               style={{
                 // minHeight: '300px',
-                height: '500px', 
-                width: '700px',
-                // padding: '20px 30px'
+                minHeight: '500px',
+                height: '100%', 
+                maxHeight: '98%',
+
+                width: '865px'
               }}
             >
               <DataGrid 
