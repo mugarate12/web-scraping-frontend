@@ -200,23 +200,7 @@ export default function Menu() {
   function renderAutomatizationptions() {
     if (openAutomatizationOptions) {
       return (
-        <>
-          <ListItem 
-            button 
-            onClick={(event) => toggleDrawer(event, '/automatization/createHostPerfil')}
-            onKeyDown={(event) => toggleDrawer(event, '/automatization/createHostPerfil')}
-          >
-            <ListItemText primary='Criar Perfil' sx={{ marginLeft: '20px' }}/>
-          </ListItem>
-          
-          <ListItem 
-            button 
-            onClick={(event) => toggleDrawer(event, '/automatization/viewHostsPerfis')}
-            onKeyDown={(event) => toggleDrawer(event, '/automatization/viewHostsPerfis')}
-          >
-            <ListItemText primary='Ver Perfis' sx={{ marginLeft: '20px' }}/>
-          </ListItem>
-          
+        <>  
           <ListItem 
             button 
             onClick={(event) => toggleDrawer(event, '/automatization/importHosts')}

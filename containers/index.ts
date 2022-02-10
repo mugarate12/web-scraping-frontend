@@ -1,3 +1,4 @@
+import CreateHostPerfil from './createHostPerfilModal'
 import EditClientModal from './EditClientModal'
 import EditEnergyModal from './EditEnergyModal'
 import EditHostPerfilModal from './EditHostPerfilModal'
@@ -7,6 +8,7 @@ import SetClientsModal from './SetClientsModal'
 import SetServicesModal from './SetServicesModal'
 
 export {
+  CreateHostPerfil,
   EditClientModal,
   EditEnergyModal,
   EditHostPerfilModal,
