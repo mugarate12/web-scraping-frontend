@@ -1,5 +1,6 @@
 import {
-  useState
+  useState,
+  useEffect
 } from 'react'
 
 import type { NextPage } from 'next'
@@ -82,6 +83,8 @@ const ImportHosts: NextPage = () => {
       const token = await zabbix.login(url, user, password)
       
       if (token.length > 0) {
+        alertHook.showAlert('usuário logado com sucesso!', 'success')
+
         setAuthToken(token)
 
         const templatesContent = await zabbix.getTemplates(url, token)
@@ -398,9 +401,7 @@ const ImportHosts: NextPage = () => {
 
               backgroundColor: '#FFF',
 
-              borderRadius: '4px',
-
-              overflowY: 'scroll'
+              borderRadius: '4px'
             }}
           >
             <Box
@@ -437,17 +438,36 @@ const ImportHosts: NextPage = () => {
               component="div"
               sx={{
                 width: '100%',
+                maxHeight: '205px',
 
+                margin: '10px 0px',
                 padding: '5px 0px',
                 
                 display: 'flex',
                 flexDirection: 'column',
                 // flexWrap: 'wrap',
+
+                overflowY: 'scroll'
               }}
             >
               {renderTemplatesOptions()}
             </Box>
+
+            <Button
+              variant="contained" 
+              size='small'
+              color='success'
+              sx={{
+                width: '200px',
+
+                alignSelf: 'flex-end'
+              }}
+              onClick={() => setOpenTemplateModal(false)}
+            >
+              Confirmar
+            </Button>
           </Box>
+
       </div>
       )
     }
@@ -531,9 +551,7 @@ const ImportHosts: NextPage = () => {
 
               backgroundColor: '#FFF',
 
-              borderRadius: '4px',
-
-              overflowY: 'scroll'
+              borderRadius: '4px'
             }}
           >
             <Box
@@ -570,16 +588,32 @@ const ImportHosts: NextPage = () => {
               component="div"
               sx={{
                 width: '100%',
+                maxHeight: '205px',
 
-                padding: '5px 0px',
+                margin: '10px 0px',
                 
                 display: 'flex',
                 flexDirection: 'column',
                 // flexWrap: 'wrap',
+                overflowY: 'scroll'
               }}
             >
               {renderProxyOptions()}
             </Box>
+
+            <Button
+              variant="contained" 
+              size='small'
+              color='success'
+              sx={{
+                width: '200px',
+
+                alignSelf: 'flex-end'
+              }}
+              onClick={() => setOpenProxyModal(false)}
+            >
+              Confirmar
+            </Button>
           </Box>
       </div>
       )
@@ -677,6 +711,29 @@ const ImportHosts: NextPage = () => {
       )
     }
   }
+
+  async function updateTemplates() {
+    const templatesContent = await zabbix.getTemplates(url, authToken)
+
+    setTemplates(templatesContent)
+  }
+
+  async function updateProxy() {
+    const proxiesContent = await zabbix.getProxy(url, authToken)
+    setProxies(proxiesContent)
+  }
+
+  useEffect(() => {
+    if (openTemplateModal) {
+      updateTemplates()
+    }
+  }, [ openTemplateModal ])
+  
+  useEffect(() => {
+    if (openProxyModal) {
+      updateProxy()
+    }
+  }, [ openProxyModal ])
 
   return (
     <>
