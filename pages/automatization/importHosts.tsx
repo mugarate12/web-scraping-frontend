@@ -121,7 +121,7 @@ const ImportHosts: NextPage = () => {
   }
 
   async function sendInformations() {
-    if (templatesSelected.length > 0 && proxySelected.length > 0) {
+    if (templatesSelected.length > 0) {
       let templatesIDs: Array<number> = []
       let proxiesSelecteds: Array<{
         host: string,
@@ -154,7 +154,7 @@ const ImportHosts: NextPage = () => {
       await zabbix.sendInformationsToZabbix(url, authToken, worksheet, templatesIDs, proxiesSelecteds)
       alertHook.showAlert('Informações adicionadas!', 'success')
     } else {
-      alertHook.showAlert('selecione ao menos um template e um proxy, por favor', 'error')
+      alertHook.showAlert('selecione ao menos um template', 'error')
     }
   }
 

@@ -234,7 +234,6 @@ export default function useZabbix () {
       "auth": token
     })
       .then(response => {
-        console.log('proxy: ', response.data)
         content = response.data.result
       })
       .catch(error => {
@@ -260,7 +259,6 @@ export default function useZabbix () {
       "auth": token
     })
       .then(response => {
-        console.log('templates: ', response.data.result)
         content = response.data.result
       })
       .catch(error => {
@@ -274,10 +272,24 @@ export default function useZabbix () {
     let result: Array<Array<string>> = []
     // https://docs.google.com/spreadsheets/d/1gy-tg3lNgEVJtj_UTVJ5x_6-3PynpZaA3dL8MftGFDA/edit?usp=sharing
 
+    const firstLetterOfLinkID = worksheetLink.indexOf('/d/') + 3
+    let cropLink = worksheetLink.slice(firstLetterOfLinkID, worksheetLink.length)
+
+    let lastLetterOfLinkID = firstLetterOfLinkID
+    for (let index = 0; index < cropLink.length; index++) {
+      const letter = cropLink[index]
+      
+      if (letter !== '/') {
+        lastLetterOfLinkID += 1
+      } else {
+        break
+      }
+    }
+
     const splitWorksheetLink = worksheetLink.split('/')
     
     if (splitWorksheetLink.length >= 5) {
-      const worksheetID = splitWorksheetLink[5]
+      const worksheetID = worksheetLink.slice(firstLetterOfLinkID, lastLetterOfLinkID)
 
       await apiDetector.get<getWorksheetRowsDataInterface>(`/zabbix/${worksheetID}`)
         .then(response => {
@@ -423,7 +435,10 @@ export default function useZabbix () {
     const groupID = await getGroupID(url, token, equipamentGroup)
 
     const host = equipamentName.trim()
-    const proxy_hostid = proxySelected[0].proxyid
+    let proxy_hostid: string = ''
+    if (proxySelected.length > 0) {
+      proxy_hostid = proxySelected[0].proxyid
+    }
 
      // modelo/marca
      const macros = [
@@ -497,13 +512,21 @@ export default function useZabbix () {
     })
 
     // request body params
-    const params = {
+    let params: any = {}
+
+    params = {
       'host': host,
-      'proxy_hostid': proxy_hostid,
       'macros': macros,
       'groups': groups,
       'interfaces': interfaces,
       'templates': templates
+    }
+
+    if (!!proxy_hostid) {
+      params = {
+        ...params,
+        proxy_hostid: proxy_hostid,
+      }
     }
 
     await axios.post(makeUrl(url), {
@@ -590,7 +613,6 @@ export default function useZabbix () {
     const groupID = await getGroupID(url, token, equipamentGroup)
 
     const host = equipamentName.trim()
-    const proxy_hostid = proxySelected[0].proxyid
 
     // modelo/marca
     const macros = [
