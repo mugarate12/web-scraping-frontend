@@ -63,6 +63,10 @@ export default function useZabbix () {
   const alertHook = useAlert()
 
   function makeUrl(url: string) {
+    if (url[url.length - 1] === '/') {
+      url = url.slice(0, url.length - 1)
+    }
+
     const newURL = `${url}/api_jsonrpc.php`
     
     return newURL

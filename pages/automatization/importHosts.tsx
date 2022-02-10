@@ -101,7 +101,7 @@ const ImportHosts: NextPage = () => {
 
   async function getInformations() {
     if (!!link) {
-      alertHook.showAlert('Coletando dandos da planilha', 'warning')
+      alertHook.showAlert('Coletando dados da planilha', 'warning')
       const worksheetData = await zabbix.getWorksheetRowsData(link)
       alertHook.showAlert('Dados coletados!', 'success')
 
