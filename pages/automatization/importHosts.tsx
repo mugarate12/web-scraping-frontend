@@ -112,6 +112,15 @@ const ImportHosts: NextPage = () => {
     link: string,
   }>()
 
+  async function updateWorksheetData(showAlert?: boolean) {
+    if (showAlert) alertHook.showAlert('Coletando dados da planilha', 'warning')
+
+    const worksheetData = await zabbix.getWorksheetRowsData(link)
+    setWorksheet(worksheetData)
+
+    if (showAlert) alertHook.showAlert('Dados coletados!', 'success')
+  }
+
   async function login() {
     if (!!url && !!user && !!password) {
       const token = await zabbix.login(url, user, password)
@@ -139,14 +148,12 @@ const ImportHosts: NextPage = () => {
   async function getInformations() {
     if (!!link) {
       alertHook.showAlert('Coletando dados da planilha', 'warning')
-      const worksheetData = await zabbix.getWorksheetRowsData(link)
+      await updateWorksheetData()
       alertHook.showAlert('Dados coletados!', 'success')
 
-      const validateWorksheet = zabbix.validateWorksheet(worksheetData)
+      const validateWorksheet = zabbix.validateWorksheet(worksheet)
 
-      setWorksheet(worksheetData)
-
-      if (worksheetData.length > 0 && validateWorksheet) {
+      if (worksheet.length > 0 && validateWorksheet) {
         setActionType('send-informations')
       }
     } else {
@@ -184,11 +191,11 @@ const ImportHosts: NextPage = () => {
         })
       })
 
-      // send informations
-      alertHook.showAlert('Atualizando dados e enviando ', 'warning')
+      // // send informations
+      // alertHook.showAlert('Atualizando dados e enviando ', 'warning')
 
-      const worksheetData = await zabbix.getWorksheetRowsData(link)
-      setWorksheet(worksheetData)
+      // await updateWorksheetData()
+      alertHook.showAlert('Enviando dados', 'warning')
 
       const errors = await zabbix.sendInformationsToZabbix(url, authToken, worksheet, templatesIDs, proxiesSelecteds)
 
@@ -314,14 +321,25 @@ const ImportHosts: NextPage = () => {
   function renderViewWorksheet() {
     if (worksheet.length > 0) {
       return (
-        <Button
-          variant='outlined'
-          size='small'
-          color='info'
-          onClick={() => {
-            setOpenWorksheetModal(true)
-          }}
-        >Ver planilha</Button>
+        <>
+          <Button
+            variant='outlined'
+            size='small'
+            color='info'
+            onClick={() => {
+              setOpenWorksheetModal(true)
+            }}
+          >Ver planilha</Button>
+          
+          <Button
+            variant='outlined'
+            size='small'
+            color='secondary'
+            onClick={() =>{
+              updateWorksheetData(true)
+            }}
+          >Atualizar planilha</Button>
+        </>
       )
     }
   }
@@ -696,13 +714,12 @@ const ImportHosts: NextPage = () => {
               maxHeight: '98vh',
               
               minWidth: '100px',
-              width: 'fit-content',
-              maxWidth: '90%',
+              width: '95%',
 
               padding: '5px 20px',
               display: 'flex',
               flexDirection: 'column',
-              // alignItems: 'center',
+              alignItems: 'center',
 
               backgroundColor: '#FFF',
 
@@ -742,7 +759,7 @@ const ImportHosts: NextPage = () => {
                 height: '100%', 
                 maxHeight: '98%',
 
-                width: '865px'
+                width: '100%'
               }}
             >
               <DataGrid 
@@ -1008,6 +1025,25 @@ const ImportHosts: NextPage = () => {
 
       {renderShowConfirmUpdatePermission()}
       {renderEditModal()}
+
+      <Button 
+        variant="contained" 
+        size='small'
+        color='info'
+        sx={{
+          position: 'absolute',
+
+          top: '70px',
+          left: '10px'
+        }}
+        onClick={() => {
+          const link = 'https://docs.google.com/spreadsheets/d/1gy-tg3lNgEVJtj_UTVJ5x_6-3PynpZaA3dL8MftGFDA/edit#gid=0'
+
+          window.open(link, '_blank')
+        }}
+      >
+        Ver planilha exemplo
+      </Button>
 
       <Button 
         variant="contained" 
