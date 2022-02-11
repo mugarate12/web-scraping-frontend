@@ -190,9 +190,13 @@ const ImportHosts: NextPage = () => {
       const worksheetData = await zabbix.getWorksheetRowsData(link)
       setWorksheet(worksheetData)
 
-      await zabbix.sendInformationsToZabbix(url, authToken, worksheet, templatesIDs, proxiesSelecteds)
+      const errors = await zabbix.sendInformationsToZabbix(url, authToken, worksheet, templatesIDs, proxiesSelecteds)
 
-      alertHook.showAlert('Informações adicionadas!', 'success')
+      if (errors.length > 0) {
+        alertHook.showAlert(errors[0], 'error')
+      } else {
+        alertHook.showAlert('Informações adicionadas!', 'success')
+      }
     } else {
       alertHook.showAlert('selecione ao menos um template', 'error')
     }

@@ -357,13 +357,21 @@ export default function useZabbix () {
 
   async function getHost(url: string, token: string, hostName: string) {
     let hostID = ''
+    let templates: Array<{
+      name: string,
+      templateid: string
+    }> = []
     
     await axios.post<{
       id: number,
       jsonrpc: string,
       result: Array<{
         hostid: string,
-        host: string
+        host: string,
+        parentTemplates: Array<{
+          name: string,
+          templateid: string
+        }>
       }>
     }>(makeUrl(url), {
       "jsonrpc": "2.0",
@@ -389,13 +397,19 @@ export default function useZabbix () {
         // hostID = response.data.result
         if (response.data.result.length > 0) {
           hostID = response.data.result[0].hostid
+          if (!!response.data.result[0].parentTemplates) {
+            templates = response.data.result[0].parentTemplates
+          }
         }
       })
       .catch(error => {
         console.log(error)
       })
 
-    return hostID
+    return {
+      id: hostID,
+      templates
+    }
   }
 
   async function createHost(
@@ -419,6 +433,8 @@ export default function useZabbix () {
       templatesIDS: Array<number>
     }
   ) {
+    let errors: Array<string> = []
+
     const equipamentGroup = equipamentInformations.group
     const equipamentName = equipamentInformations.name
     const equipamentCommunity = equipamentInformations.community
@@ -445,7 +461,7 @@ export default function useZabbix () {
       {
         macro: '{$SNMP_COMMUNITY}',
         value: equipamentCommunity.trim(),
-        "description": equipamentDescription.trim()
+        // "description": equipamentDescription.trim()
       }
     ]
 
@@ -519,7 +535,8 @@ export default function useZabbix () {
       'macros': macros,
       'groups': groups,
       'interfaces': interfaces,
-      'templates': templates
+      'templates': templates,
+      "description": equipamentDescription.trim(),
     }
 
     if (!!proxy_hostid) {
@@ -529,7 +546,11 @@ export default function useZabbix () {
       }
     }
 
-    await axios.post(makeUrl(url), {
+    await axios.post<{
+      error?: {
+        data: string
+      }
+    }>(makeUrl(url), {
       "jsonrpc": "2.0",
       "method": "host.create",
       "params": params,
@@ -538,10 +559,20 @@ export default function useZabbix () {
     })
       .then(response => {
         console.log('send informations response:: ', response.data)
+
+        if (!!response.data.error && response.data.error.data.includes('another template')) {
+          if (errors.length > 0 && errors[0] !== 'Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos') {
+            errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+          } else {
+            errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+          }
+        }
       })
       .catch(error => {
         console.log('send informations error:', error)
       })
+
+    return errors
   }
 
   async function isRowUpdatable() {
@@ -581,6 +612,10 @@ export default function useZabbix () {
     },
     equipamentInformations: {
       hostID: string,
+      actualTemplates: Array<{
+        name: string,
+        templateid: string
+      }>,
 
       group: string,
       name: string,
@@ -597,6 +632,8 @@ export default function useZabbix () {
       templatesIDS: Array<number>
     }
   ) {
+    let errors: Array<string> = []
+
     const equipamentGroup = equipamentInformations.group
     const equipamentName = equipamentInformations.name
     const equipamentCommunity = equipamentInformations.community
@@ -619,7 +656,7 @@ export default function useZabbix () {
       {
         macro: '{$SNMP_COMMUNITY}',
         value: equipamentCommunity.trim(),
-        "description": equipamentDescription.trim()
+        // "description": equipamentDescription.trim()
       }
     ]
 
@@ -678,10 +715,19 @@ export default function useZabbix () {
       }
     ]
 
-    const templates = templatesIDS.map((templateID) => {
-      return {
+    // templates
+    let templates: Array<{
+        templateid: string;
+    }> = []
+    templatesIDS.forEach((templateID) => {
+      templates.push({
         'templateid': String(templateID)
-      }
+      })
+    })
+    equipamentInformations.actualTemplates.forEach((template) => {
+      templates.push({
+        'templateid': String(template.templateid)
+      })
     })
 
     // request body params
@@ -689,10 +735,15 @@ export default function useZabbix () {
       'hostid': equipamentInformations.hostID,
       'macros': macros,
       'groups': groups,
-      'templates': templates
+      'templates': templates,
+      "description": equipamentDescription.trim(),
     }
 
-    await axios.post(makeUrl(url), {
+    await axios.post<{
+      error?: {
+        data: string
+      }
+    }>(makeUrl(url), {
       "jsonrpc": "2.0",
       "method": "host.update",
       "params": params,
@@ -701,12 +752,18 @@ export default function useZabbix () {
     })
       .then(response => {
         console.log('send informations response:: ', response.data)
+
+        if (errors.length > 0 && errors[0] !== 'Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos') {
+          errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+        } else {
+          errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+        }
       })
       .catch(error => {
         console.log('send informations error:', error)
       })
     
-      await axios.post(makeUrl(url), {
+    await axios.post(makeUrl(url), {
       "jsonrpc": "2.0",
       "method": "host.update",
       "params": {
@@ -722,6 +779,8 @@ export default function useZabbix () {
       .catch(error => {
         console.log('send informations error:', error)
       })
+
+    return errors
   }
 
   async function sendInformationsToZabbix(
@@ -744,6 +803,7 @@ export default function useZabbix () {
       isVersion: boolean,
       isDescription: boolean
     }> = []
+    let errorsResponse: Array<string> = []
 
     for (let index = 0; index < worksheetData.length; index++) {
       const row = worksheetData[index]
@@ -759,12 +819,16 @@ export default function useZabbix () {
       const isHaveHost = await haveHost(url, token, equipamentName)
       // if have host, indicate update
       if (isHaveHost) {
-        const hostID = await getHost(url, token, equipamentName)
+        const { 
+          id: hostID,
+          templates
+        } = await getHost(url, token, equipamentName)
         
-        await updateHost(
+        const errors = await updateHost(
           { url, token },
           { 
             hostID: hostID,
+            actualTemplates: templates,
 
             group: equipamentGroup,
             name: equipamentName,
@@ -778,9 +842,17 @@ export default function useZabbix () {
             templatesIDS
           }
         )
+
+        if (errors.length > 0 && errorsResponse.length > 0 && errors[0] !== errorsResponse[0]) {
+          errorsResponse.push(errors[0])
+        }
+
+        if (errors.length > 0 && errorsResponse.length === 0) {
+          errorsResponse.push(errors[0])
+        }
       } else {
         // if not, create this
-        await createHost(
+        const errors = await createHost(
           { url, token },
           { 
             group: equipamentGroup,
@@ -795,8 +867,18 @@ export default function useZabbix () {
             templatesIDS
           }
         )
+
+        if (errors.length > 0 && errorsResponse.length > 0 && errors[0] !== errorsResponse[0]) {
+          errorsResponse.push(errors[0])
+        }
+
+        if (errors.length > 0 && errorsResponse.length === 0) {
+          errorsResponse.push(errors[0])
+        }
       }
     }
+
+    return errorsResponse
   }
 
   return {

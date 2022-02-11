@@ -177,14 +177,6 @@ export default function Menu() {
     if (openOCROptions) {
       return (
         <>
-          {/* <ListItem 
-            button 
-            onClick={(event) => toggleDrawer(event, '/energy/create')}
-            onKeyDown={(event) => toggleDrawer(event, '/energy/create')}
-          >
-            <ListItemText primary='Criar Monitoramento' sx={{ marginLeft: '20px' }}/>
-          </ListItem> */}
-          
           <ListItem 
             button 
             onClick={(event) => toggleDrawer(event, '/ocr')}
