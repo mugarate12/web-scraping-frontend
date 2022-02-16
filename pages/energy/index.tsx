@@ -151,8 +151,10 @@ const ViewEnergyPage: NextPage = () => {
     // cpfl
     if (dealership === 'cpfl') {
       await energyOperations.updateManually(state, city)
-    } else {
+    } else if (dealership === 'equatorial') {
       await energyOperations.updateManuallyEquatorial(state, city) 
+    } else {
+      await energyOperations.updateManuallyEnergisa(state, city)
     }
 
     setUpdatingSingleService(id)

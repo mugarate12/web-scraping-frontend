@@ -6,7 +6,8 @@ import ContextWrapper from '../context'
 import {
   Alert,
   Header,
-  Menu
+  Menu,
+  Notification
 } from './../components'
 
 import '../styles/globals.css'
@@ -25,6 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Alert />
         <Header />
         <Menu />
+        <Notification />
 
         <Component {...pageProps} />
       </ContextWrapper>

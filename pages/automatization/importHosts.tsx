@@ -44,13 +44,15 @@ import {
   useAlert,
   useZabbix,
   useHostsPerfis,
-  useHostsPerfisOperations
+  useHostsPerfisOperations,
+  useNotification
 } from './../../hooks'
 
 import styles from '../../styles/importHosts.module.css'
 
 const ImportHosts: NextPage = () => {
   const alertHook = useAlert()
+  const notificationHook = useNotification()
   const zabbix = useZabbix()
 
   const [ updateHostPerfis, setUpdateHostsPerfis ] = useState<boolean>(false)
@@ -1010,6 +1012,10 @@ const ImportHosts: NextPage = () => {
       updateProxy()
     }
   }, [ openProxyModal ])
+
+  useEffect(() => {
+    notificationHook.showNotification('Certifique-se que a planilha é compartilhável à qualquer pessoa via link, por favor', 'info')
+  }, [])
 
   return (
     <>

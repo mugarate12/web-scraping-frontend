@@ -109,6 +109,18 @@ export default function useEnergyOperations({ setUpdate }: Params) {
         alertHook.showAlert('erro ao atualizar serviço, tente novamente', 'error')
       })
   }
+  
+  async function updateManuallyEnergisa(state: string, city: string) {
+    await apiEnergy.get(`/energisa/singleUpdate/${state}/${city}`)
+      .then(() => {
+        alertHook.showAlert('serviço atualizado com sucesso!', 'success')
+      })
+      .catch(error => {
+        console.log(error)
+
+        alertHook.showAlert('erro ao atualizar serviço, tente novamente', 'error')
+      })
+  }
 
   async function updateManuallyEquatorial(state: string, city: string) {
     await apiEnergy.get(`/equatorial/singleUpdate/${state}/${city}`)
@@ -148,6 +160,7 @@ export default function useEnergyOperations({ setUpdate }: Params) {
     update,
     updateManually,
     updateManuallyEquatorial,
+    updateManuallyEnergisa,
     remove
   }  
 }

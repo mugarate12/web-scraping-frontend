@@ -51,6 +51,8 @@ export default function Menu() {
     setOpenServicesOptions(false)
     setOpenClientsOptions(false)
     setOpenEnergyOptions(false)
+    setOpenOCROptions(false)
+    setOpenAutomatizationOptions(false)
 
     if (!!pagePath) {
       router.push(pagePath)
@@ -61,6 +63,14 @@ export default function Menu() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return
     }
+
+    // setOpen(false)
+    // setOpenUsersOptions(false)
+    // setOpenServicesOptions(false)
+    // setOpenClientsOptions(false)
+    // setOpenEnergyOptions(false)
+    // setOpenOCROptions(false)
+    // setOpenAutomatizationOptions(false)
 
     func()
   }

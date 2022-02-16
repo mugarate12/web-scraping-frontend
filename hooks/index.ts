@@ -8,6 +8,7 @@ import useEnergyUpdateTime from "./useEnergyUpdateTime"
 import useEnergyWithClients from "./useEnergyWithClients"
 import useHostsPerfis from "./useHostsPerfis"
 import useHostsPerfisOperations from './useHostsPerfisOperations'
+import useNotification from './useNotification'
 import useOCRRegistredServices from "./useOCRRegistredServices"
 import useOCROperations from "./useOCROperations"
 import useOCRServices from './useOCRServices'
@@ -35,6 +36,7 @@ export {
   useEnergyWithClients,
   useHostsPerfis,
   useHostsPerfisOperations,
+  useNotification,
   useOCROperations,
   useOCRRegistredServices,
   useOCRServices,

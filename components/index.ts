@@ -4,6 +4,7 @@ import Graph from "./Graph"
 import Header from "./Header"
 import Menu from "./Menu"
 import Modal from './Modal'
+import Notification from './Notification'
 import Timer from './Timer'
 
 export {
@@ -13,5 +14,6 @@ export {
   Header,
   Menu,
   Modal,
+  Notification,
   Timer
 }
