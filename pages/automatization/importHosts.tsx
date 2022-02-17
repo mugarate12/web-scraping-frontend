@@ -114,6 +114,10 @@ const ImportHosts: NextPage = () => {
     link: string,
   }>()
 
+  async function sleep(seconds: number) {
+    return new Promise(resolve => setTimeout(resolve, 1000 * seconds))
+  }
+
   async function updateWorksheetData(showAlert?: boolean) {
     if (showAlert) alertHook.showAlert('Coletando dados da planilha', 'warning')
 
@@ -149,12 +153,15 @@ const ImportHosts: NextPage = () => {
 
   async function getInformations() {
     if (!!link) {
-      alertHook.showAlert('Coletando dados da planilha', 'warning')
-      await updateWorksheetData()
-      alertHook.showAlert('Dados coletados!', 'success')
+      await updateWorksheetData(true)
+      console.log('eu')
+      await sleep(4)
+      console.log('nos')
 
       const validateWorksheet = zabbix.validateWorksheet(worksheet)
 
+      console.log(worksheet.length > 0, validateWorksheet, worksheet.length > 0 && validateWorksheet)
+      console.log(worksheet)
       if (worksheet.length > 0 && validateWorksheet) {
         setActionType('send-informations')
       }

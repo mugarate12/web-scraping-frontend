@@ -51,6 +51,26 @@ interface getEnergyServicesInterface {
   data: Array<EnergyServiceInterface>
 }
 
+interface NFSEFazendaInterface {
+  id: number,
+
+  update_time: string,
+
+  autorizador: string,
+  autorizacao: number,
+  retorno_autorizacao: number,
+  inutilizacao: number,
+  consulta_protocolo: number,
+  status_servico: number,
+  tempo_medio: string,
+  consulta_cadastro: number,
+  recepcao_evento: number
+}
+
+interface getNFSEFazendaServicesInterface {
+  data: Array<NFSEFazendaInterface>
+}
+
 interface Props {
   title: string,
   setViewModal: Dispatch<SetStateAction<boolean>>,
@@ -91,6 +111,13 @@ export default function SetServicesModal({
   const [ ocrCity, setOcrCity ] = useState<string>('')
   const ocrRegistredServices = useOCRRegistredServices({ state: ocrState, city: ocrCity })
 
+  // nfe fazenda
+  const [ nfeFazendaServices, setNfeFazendaServices ] = useState<Array<NFSEFazendaInterface>>([])
+  const [ nfeFazendaPermissions, setNfeFazendaPermissons ] = useState<Array<{
+    nfe_fazenda_FK: number,
+    client_FK: number
+  }>>([])
+
   const [ ocrPermissions, setOcrPermissions ] = useState<Array<{
     client_FK: number, 
       state: string, 
@@ -103,6 +130,15 @@ export default function SetServicesModal({
     await apiEnergy.get<getEnergyServicesInterface>(`/service/cpfl/client/access/${dealership}/${state}/${clientKey}`)
       .then((response) => {
         setServicesPermitted(response.data.data)
+        console.log(response.data.data)
+      })
+      .catch(error => console.log(error))
+  }
+
+  async function getNfeFazendaServices() {
+    await apiEnergy.get<getNFSEFazendaServicesInterface>(`/nfefazenda`)
+      .then((response) => {
+        setNfeFazendaServices(response.data.data)
         console.log(response.data.data)
       })
       .catch(error => console.log(error))
@@ -131,6 +167,12 @@ export default function SetServicesModal({
       getEnergyServices()
     }
   }, [ dealership, state, clientKey ])
+
+  useEffect(() => {
+    if (accessType === 'NFE Fazenda') {
+      getNfeFazendaServices() 
+    }
+  }, [ accessType ])
 
   // useEffect(() => {
   //   permissionsArrayLoaded()
@@ -168,16 +210,20 @@ export default function SetServicesModal({
   async function addPermissions() {
     if (accessType === 'Energy') {
       await publicAccessClientsOperations.addPermissions(clientID, { permissionsArray })
-    } else {
+    } else if (accessType === 'OCR') {
       await ocrOperations.addPermission(ocrPermissions)
+    } else {
+      await publicAccessClientsOperations.addPermissionsToNfeFazenda(nfeFazendaPermissions)
     }
   }
   
   async function removePermissions() {
     if (accessType === 'Energy') {
       await publicAccessClientsOperations.removePermissions(clientID, { permissionsArray })
-    } else {
+    } else if (accessType === 'OCR') {
       await ocrOperations.removePermission(ocrPermissions)
+    } else {
+      await publicAccessClientsOperations.removePermissionsToNfeFazenda(nfeFazendaPermissions)
     }
   }
 
@@ -286,6 +332,8 @@ export default function SetServicesModal({
           />
         </>
       )
+    } else if (accessType === 'NFE Fazenda') {
+
     }
   }
 
@@ -326,6 +374,43 @@ export default function SetServicesModal({
         </Box>
       )
     })
+  }
+
+  function renderNfeFazendaServices() {
+    if (accessType === 'NFE Fazenda') {
+      return nfeFazendaServices.map((service) => {
+        return (
+          <Box
+            component='div'
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <Checkbox
+              onChange={() => {
+                setNfeFazendaPermissons([
+                  ...nfeFazendaPermissions,
+                  {
+                    client_FK: clientFK,
+                    nfe_fazenda_FK: service.id
+                  }
+                ])
+              }}
+            />
+  
+            <Typography
+                variant='subtitle2'
+                component='p'
+              >
+                {service.autorizador}
+                {/* {energyService.label} */}
+              </Typography>
+          </Box>
+        )
+      })
+    }
   }
 
   function renderCities() {
@@ -421,6 +506,7 @@ export default function SetServicesModal({
         >
           <MenuItem value='Energy'>Energia</MenuItem>
           <MenuItem value='OCR'>OCR</MenuItem>
+          <MenuItem value='NFE Fazenda'>NFE Fazenda</MenuItem>
         </Select>
 
 
@@ -443,6 +529,7 @@ export default function SetServicesModal({
       >
         {renderCities()}
         {renderOcrServices()}
+        {renderNfeFazendaServices()}
       </Box>
 
       <div className={styles.actions_container}>

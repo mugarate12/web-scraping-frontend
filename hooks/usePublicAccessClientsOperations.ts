@@ -214,6 +214,45 @@ export default function usePublicAccessClientsOperations({
         return false
       })
   }
+
+  // nfe fazenda
+  async function addPermissionsToNfeFazenda(data: Array<{
+    nfe_fazenda_FK: number,
+    client_FK: number
+  }>) {
+    return await apiDetector.post('/nfefazenda/addPermissions', {
+      permissions: data
+    })
+      .then(() => {
+        alertHook.showAlert('Permissões adicionadas com sucesso!', 'success')
+
+        return true
+      })
+      .catch(() => {
+        alertHook.showAlert('Erro ao adicionar permissões, tente novamente', 'error')
+
+        return false
+      })
+  }
+  
+  async function removePermissionsToNfeFazenda(data: Array<{
+    nfe_fazenda_FK: number,
+    client_FK: number
+  }>) {
+    return await apiDetector.post('/nfefazenda/removePermissions', {
+      permissions: data
+    })
+      .then(() => {
+        alertHook.showAlert('Permissões retiradas com sucesso!', 'success')
+
+        return true
+      })
+      .catch(() => {
+        alertHook.showAlert('Erro ao retirar permissões, tente novamente', 'error')
+
+        return false
+      })
+  }
   
   return {
     create,
@@ -221,6 +260,9 @@ export default function usePublicAccessClientsOperations({
     remove,
     getPermissions,
     addPermissions,
-    removePermissions
+    removePermissions,
+
+    addPermissionsToNfeFazenda,
+    removePermissionsToNfeFazenda
   }
 }
