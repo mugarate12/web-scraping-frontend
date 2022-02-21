@@ -431,6 +431,10 @@ export default function useZabbix () {
         proxyid: string
       }>,
       templatesIDS: Array<number>
+    },
+    useInterfaces: {
+      snmpInterface: boolean,
+      agentInterface: boolean
     }
   ) {
     let errors: Array<string> = []
@@ -449,6 +453,7 @@ export default function useZabbix () {
     const templatesIDS = complementInformations.templatesIDS
 
     const groupID = await getGroupID(url, token, equipamentGroup)
+    // const groupsIDs :
 
     const host = equipamentName.trim()
     let proxy_hostid: string = ''
@@ -465,11 +470,22 @@ export default function useZabbix () {
       }
     ]
 
-    const groups = [
-      {
-        'groupid': groupID[0]
-      }
+    // groups process
+    const groups: {
+      groupid: string;
+    }[] = [
+      // {
+      //   'groupid': groupID[0]
+      // }
     ]
+    
+    const groupsSplittedPerDots = equipamentGroup.split(',')
+    for (let index = 0; index < groupsSplittedPerDots.length; index++) {
+      const group = groupsSplittedPerDots[index]
+      const groupID = await getGroupID(url, token, equipamentGroup)
+      
+      groups.push({ 'groupid': groupID[0] })
+    }
 
     // versão é retirada da tabela tendo que se v1 === 1 e se v2 === 2
     let version = 1
@@ -487,8 +503,11 @@ export default function useZabbix () {
     }
 
      // ip vem da tabela
-    const interfaces = [
-      {
+    // set user interfaces
+    let interfaces: Array<any> = []
+
+    if (useInterfaces.snmpInterface) {
+      interfaces.push({
         'type': 2,
         'useip': 1,
         'main': 1,
@@ -502,24 +521,29 @@ export default function useZabbix () {
           'bulk': 1,
           'community': '{$SNMP_COMMUNITY}'
         }
-      },
-      {
-        'type': 1,
-        'useip': 1,
-        'main': 1,
-        // get to row
-        'ip': equipamentIp,
-        'dns': '',
-        'port': '10050',
-        'details': {
-          // get to row
-          'version': version,
-          'bulk': 1,
-          'community': '{$SNMP_COMMUNITY}'
+      })
+    }
 
+    if (useInterfaces.agentInterface) {
+      interfaces.push(
+        {
+          'type': 1,
+          'useip': 1,
+          'main': 1,
+          // get to row
+          'ip': equipamentIp,
+          'dns': '',
+          'port': '10050',
+          'details': {
+            // get to row
+            'version': version,
+            'bulk': 1,
+            'community': '{$SNMP_COMMUNITY}'
+  
+          }
         }
-      }
-    ]
+      )
+    }
 
     const templates = templatesIDS.map((templateID) => {
       return {
@@ -565,6 +589,13 @@ export default function useZabbix () {
             errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
           } else {
             errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+          }
+        } else if (!!response.data.error && response.data.error.data.includes('Cannot find host interface')) {
+          console.log('chega aqui')
+          if (errors.length > 0 && errors[0] !== 'Erro ao associar template à interface, por favor, verifique se são compatíveis') {
+            errors.push('Erro ao associar template à interface, por favor, verifique se são compatíveis')
+          } else {
+            errors.push('Erro ao associar template à interface, por favor, verifique se são compatíveis')
           }
         }
       })
@@ -630,6 +661,10 @@ export default function useZabbix () {
         proxyid: string
       }>,
       templatesIDS: Array<number>
+    },
+    useInterfaces: {
+      snmpInterface: boolean,
+      agentInterface: boolean
     }
   ) {
     let errors: Array<string> = []
@@ -681,8 +716,11 @@ export default function useZabbix () {
       version = 3
     }
 
-    const interfaces = [
-      {
+    // interfaces
+    let interfaces: Array<any> = []
+
+    if (useInterfaces.snmpInterface) {
+      interfaces.push({
         'type': 2,
         'useip': 1,
         'main': 1,
@@ -696,24 +734,29 @@ export default function useZabbix () {
           'bulk': 1,
           'community': '{$SNMP_COMMUNITY}'
         }
-      },
-      {
-        'type': 1,
-        'useip': 1,
-        'main': 1,
-        // get to row
-        'ip': equipamentIp,
-        'dns': '',
-        'port': '10050',
-        'details': {
-          // get to row
-          'version': version,
-          'bulk': 1,
-          'community': '{$SNMP_COMMUNITY}'
+      })
+    }
 
+    if (useInterfaces.agentInterface) {
+      interfaces.push(
+        {
+          'type': 1,
+          'useip': 1,
+          'main': 1,
+          // get to row
+          'ip': equipamentIp,
+          'dns': '',
+          'port': '10050',
+          'details': {
+            // get to row
+            'version': version,
+            'bulk': 1,
+            'community': '{$SNMP_COMMUNITY}'
+  
+          }
         }
-      }
-    ]
+      )
+    }
 
     // templates
     let templates: Array<{
@@ -753,10 +796,19 @@ export default function useZabbix () {
       .then(response => {
         console.log('send informations response:: ', response.data)
 
-        if (errors.length > 0 && errors[0] !== 'Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos') {
-          errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
-        } else {
-          errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+        if (!!response.data.error && response.data.error.data.includes('another template')) {
+          if (errors.length > 0 && errors[0] !== 'Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos') {
+            errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+          } else {
+            errors.push('Erro ao associar templates, por favor, verifique os templates selecionados para não haver conflitos')
+          }
+        } else if (!!response.data.error && response.data.error.data.includes('Cannot find host interface')) {
+          console.log('chega aqui')
+          if (errors.length > 0 && errors[0] !== 'Erro ao associar template à interface, por favor, verifique se são compatíveis') {
+            errors.push('Erro ao associar template à interface, por favor, verifique se são compatíveis')
+          } else {
+            errors.push('Erro ao associar template à interface, por favor, verifique se são compatíveis')
+          }
         }
       })
       .catch(error => {
@@ -791,7 +843,11 @@ export default function useZabbix () {
     proxySelected:  Array<{
       host: string,
       proxyid: string
-    }>
+    }>,
+    interfaces: {
+      snmpInterface: boolean,
+      agentInterface: boolean
+    }
   ) {
     let updatesToMake: Array<{
       lineOfWorksheet: number,
@@ -814,6 +870,8 @@ export default function useZabbix () {
       const equipamentIp = row[3]
       const equipamentVersion = row[4]
       const equipamentDescription = row[5]
+
+      console.log('grpup', equipamentGroup)
       
       // get host
       const isHaveHost = await haveHost(url, token, equipamentName)
@@ -840,7 +898,8 @@ export default function useZabbix () {
           {
             proxySelected,
             templatesIDS
-          }
+          },
+          interfaces
         )
 
         if (errors.length > 0 && errorsResponse.length > 0 && errors[0] !== errorsResponse[0]) {
@@ -865,7 +924,8 @@ export default function useZabbix () {
           {
             proxySelected,
             templatesIDS
-          }
+          },
+          interfaces
         )
 
         if (errors.length > 0 && errorsResponse.length > 0 && errors[0] !== errorsResponse[0]) {

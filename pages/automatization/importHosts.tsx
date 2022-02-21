@@ -104,6 +104,11 @@ const ImportHosts: NextPage = () => {
   const [ confirmDelete, setConfirmDelete] = useState<boolean>(false)
   const [ perfilIDToDelete, setPerfilIDToDelete ] = useState<number>()
 
+  // handle interfaces
+  const [ snmpInterface, setSnmpInterface ] = useState<boolean>(false)
+  const [ agentInterface, setAgenteInterface ] = useState<boolean>(false)
+
+  // handle edit host perfil
   const [ showEditModal, setShowEditModal ] = useState<boolean>(false)
   const [ userToEdit, setUserToEdit ] = useState<{
     id: number,
@@ -154,9 +159,6 @@ const ImportHosts: NextPage = () => {
   async function getInformations() {
     if (!!link) {
       await updateWorksheetData(true)
-      console.log('eu')
-      await sleep(4)
-      console.log('nos')
 
       const validateWorksheet = zabbix.validateWorksheet(worksheet)
 
@@ -171,7 +173,8 @@ const ImportHosts: NextPage = () => {
   }
 
   async function sendInformations() {
-    if (templatesSelected.length > 0) {
+    console.log('a', (snmpInterface || agentInterface))
+    if (templatesSelected.length > 0 && (snmpInterface || agentInterface)) {
       let templatesIDs: Array<number> = []
       let proxiesSelecteds: Array<{
         host: string,
@@ -206,7 +209,17 @@ const ImportHosts: NextPage = () => {
       // await updateWorksheetData()
       alertHook.showAlert('Enviando dados', 'warning')
 
-      const errors = await zabbix.sendInformationsToZabbix(url, authToken, worksheet, templatesIDs, proxiesSelecteds)
+      const errors = await zabbix.sendInformationsToZabbix(
+        url, 
+        authToken, 
+        worksheet, 
+        templatesIDs, 
+        proxiesSelecteds,
+        {
+          snmpInterface: snmpInterface,
+          agentInterface: agentInterface
+        }
+      )
 
       if (errors.length > 0) {
         alertHook.showAlert(errors[0], 'error')
@@ -214,7 +227,7 @@ const ImportHosts: NextPage = () => {
         alertHook.showAlert('Informações adicionadas!', 'success')
       }
     } else {
-      alertHook.showAlert('selecione ao menos um template', 'error')
+      alertHook.showAlert('selecione ao menos um template e uma interface', 'error')
     }
   }
 
@@ -374,6 +387,52 @@ const ImportHosts: NextPage = () => {
               setOpenProxyModal(true)
             }}
           >Selecionar proxies</Button>
+          
+          <Box
+            component='div'
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <Checkbox
+              // checked={clientChecked(client.id)}
+              checked={snmpInterface}
+              onChange={(event) => setSnmpInterface(!snmpInterface)}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+
+            <Typography
+              variant='subtitle2'
+              component='p'
+            >
+              SNMP Interface
+            </Typography>
+          </Box>
+          
+          <Box
+            component='div'
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <Checkbox
+              // checked={clientChecked(client.id)}
+              checked={agentInterface}
+              onChange={(event) => setAgenteInterface(!agentInterface)}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+
+            <Typography
+              variant='subtitle2'
+              component='p'
+            >
+              Agent Interface
+            </Typography>
+          </Box>
 
           <TextField
             label="link da planilha"
