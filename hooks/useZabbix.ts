@@ -682,7 +682,7 @@ export default function useZabbix () {
     const proxySelected = complementInformations.proxySelected
     const templatesIDS = complementInformations.templatesIDS
 
-    const groupID = await getGroupID(url, token, equipamentGroup)
+    // const groupID = await getGroupID(url, token, equipamentGroup)
 
     const host = equipamentName.trim()
 
@@ -695,11 +695,22 @@ export default function useZabbix () {
       }
     ]
 
-    const groups = [
-      {
-        'groupid': groupID[0]
-      }
+    // groups process
+    const groups: {
+      groupid: string;
+    }[] = [
+      // {
+      //   'groupid': groupID[0]
+      // }
     ]
+    
+    const groupsSplittedPerDots = equipamentGroup.split(',')
+    for (let index = 0; index < groupsSplittedPerDots.length; index++) {
+      const group = groupsSplittedPerDots[index]
+      const groupID = await getGroupID(url, token, equipamentGroup)
+      
+      groups.push({ 'groupid': groupID[0] })
+    }
 
     // versão é retirada da tabela tendo que se v1 === 1 e se v2 === 2
     let version = 1
